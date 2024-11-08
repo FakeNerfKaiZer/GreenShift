@@ -97,6 +97,8 @@ public class MainGUI extends javax.swing.JFrame {
             }
         });
 
+        jTextField1.setText("jTextField1");
+
         label1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         label1.setForeground(new java.awt.Color(242, 242, 242));
         label1.setName(""); // NOI18N
