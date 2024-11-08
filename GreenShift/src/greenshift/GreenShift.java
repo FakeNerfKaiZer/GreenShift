@@ -14,7 +14,7 @@ public class GreenShift {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        GreenShiftGUI greenshiftgui = new GreenShiftGUI();
+        StartPageGUI greenshiftgui = new StartPageGUI();
         greenshiftgui.show();
     }
     
