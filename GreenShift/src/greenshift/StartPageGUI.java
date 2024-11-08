@@ -72,11 +72,6 @@ public class StartPageGUI extends javax.swing.JFrame {
         homeBTN.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         homeBTN.setForeground(new java.awt.Color(255, 255, 255));
         homeBTN.setText("Start");
-        homeBTN.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                homeBTNActionPerformed(evt);
-            }
-        });
 
         label1.setFont(new java.awt.Font("Dialog", 1, 80)); // NOI18N
         label1.setForeground(new java.awt.Color(255, 255, 255));
@@ -128,10 +123,6 @@ public class StartPageGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void homeBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBTNActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_homeBTNActionPerformed
 
     /**
      * @param args the command line arguments
