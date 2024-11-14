@@ -16,10 +16,10 @@ public class MainGUI extends javax.swing.JFrame {
      * Creates new form GreenShiftGUI
      */
     public MainGUI() {
-        Background.removeAll();
-        Background.add(WelcomePanel);
-        Background.repaint();
-        Background.revalidate();
+       Background.removeAll();
+       Background.add(WelcomePanel);
+       Background.repaint();
+       Background.revalidate();
         
         initComponents();
     }
@@ -43,6 +43,8 @@ public class MainGUI extends javax.swing.JFrame {
         navTrackerBtn = new javax.swing.JButton();
         label3 = new java.awt.Label();
         Background = new javax.swing.JPanel();
+        WelcomePanel = new javax.swing.JPanel();
+        jTextField2 = new javax.swing.JTextField();
         TipPanel = new javax.swing.JPanel();
         QuizPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -178,6 +180,29 @@ public class MainGUI extends javax.swing.JFrame {
 
         Background.setBackground(new java.awt.Color(1, 148, 141));
         Background.setLayout(new java.awt.CardLayout());
+
+        WelcomePanel.setBackground(new java.awt.Color(1, 148, 141));
+
+        jTextField2.setText("jTextField2");
+
+        javax.swing.GroupLayout WelcomePanelLayout = new javax.swing.GroupLayout(WelcomePanel);
+        WelcomePanel.setLayout(WelcomePanelLayout);
+        WelcomePanelLayout.setHorizontalGroup(
+            WelcomePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(WelcomePanelLayout.createSequentialGroup()
+                .addGap(294, 294, 294)
+                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(312, Short.MAX_VALUE))
+        );
+        WelcomePanelLayout.setVerticalGroup(
+            WelcomePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, WelcomePanelLayout.createSequentialGroup()
+                .addContainerGap(439, Short.MAX_VALUE)
+                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(213, 213, 213))
+        );
+
+        Background.add(WelcomePanel, "card5");
 
         TipPanel.setBackground(new java.awt.Color(1, 148, 141));
 
@@ -381,7 +406,7 @@ public class MainGUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Background, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(Background, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
             .addComponent(Navbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -522,6 +547,7 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JPanel QuizPanel;
     private javax.swing.JPanel TipPanel;
     private javax.swing.JPanel TrackerPanel;
+    private javax.swing.JPanel WelcomePanel;
     private javax.swing.JToggleButton addBTN1;
     private javax.swing.JRadioButton answerFour;
     private javax.swing.JRadioButton answerOne;
@@ -533,6 +559,7 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private java.awt.Label label1;
     private java.awt.Label label2;
     private java.awt.Label label3;
