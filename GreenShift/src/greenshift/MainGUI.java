@@ -4,6 +4,7 @@
  */
 package greenshift;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 
 /**
@@ -11,19 +12,19 @@ import java.awt.Color;
  * @author bloxd
  */
 public class MainGUI extends javax.swing.JFrame {
-
+    
+    public void showWelcomePanel() {
+    CardLayout cardLayout = (CardLayout) Background.getLayout();
+    cardLayout.show(Background, "WelcomePanel"); // Use the name assigned to WelcomePanel
+}
     /**
      * Creates new form GreenShiftGUI
      */
-    public MainGUI() {
-       Background.removeAll();
-       Background.add(WelcomePanel);
-       Background.repaint();
-       Background.revalidate();
-        
+    public MainGUI() {        
         initComponents();
     }
 
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

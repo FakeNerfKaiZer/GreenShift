@@ -131,8 +131,13 @@ public class StartPageGUI extends javax.swing.JFrame {
 
     private void homeBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBTNActionPerformed
         // TODO add your handling code here:
+        // Close current window
         this.dispose();
-        new MainGUI().setVisible(true);
+
+        // Open MainGUI and show WelcomePanel
+        MainGUI mainGUI = new MainGUI();
+        mainGUI.showWelcomePanel();  // Display the WelcomePanel card
+        mainGUI.setVisible(true);
     }//GEN-LAST:event_homeBTNActionPerformed
 
     /**
