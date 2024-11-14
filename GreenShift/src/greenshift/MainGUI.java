@@ -16,6 +16,11 @@ public class MainGUI extends javax.swing.JFrame {
      * Creates new form GreenShiftGUI
      */
     public MainGUI() {
+        Background.removeAll();
+        Background.add(WelcomePanel);
+        Background.repaint();
+        Background.revalidate();
+        
         initComponents();
     }
 
@@ -30,6 +35,7 @@ public class MainGUI extends javax.swing.JFrame {
 
         background = new javax.swing.JPanel();
         textArea1 = new java.awt.TextArea();
+        jPanel1 = new javax.swing.JPanel();
         Navbar = new javax.swing.JPanel();
         navExitBtn = new javax.swing.JButton();
         navQuizBtn = new javax.swing.JButton();
@@ -37,14 +43,6 @@ public class MainGUI extends javax.swing.JFrame {
         navTrackerBtn = new javax.swing.JButton();
         label3 = new java.awt.Label();
         Background = new javax.swing.JPanel();
-        TrackerPanel = new javax.swing.JPanel();
-        deleteBTN = new javax.swing.JToggleButton();
-        addBTN1 = new javax.swing.JToggleButton();
-        nextBTN = new javax.swing.JButton();
-        textArea2 = new java.awt.TextArea();
-        jTextField1 = new javax.swing.JTextField();
-        label1 = new java.awt.Label();
-        label2 = new java.awt.Label();
         TipPanel = new javax.swing.JPanel();
         QuizPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -56,6 +54,14 @@ public class MainGUI extends javax.swing.JFrame {
         answerFour = new javax.swing.JRadioButton();
         prevQuestionBtn = new javax.swing.JButton();
         nextQuestionBtn = new javax.swing.JButton();
+        TrackerPanel = new javax.swing.JPanel();
+        deleteBTN = new javax.swing.JToggleButton();
+        addBTN1 = new javax.swing.JToggleButton();
+        nextBTN = new javax.swing.JButton();
+        textArea2 = new java.awt.TextArea();
+        jTextField1 = new javax.swing.JTextField();
+        label1 = new java.awt.Label();
+        label2 = new java.awt.Label();
 
         background.setBackground(new java.awt.Color(1, 148, 141));
 
@@ -70,6 +76,17 @@ public class MainGUI extends javax.swing.JFrame {
             .addGap(0, 535, Short.MAX_VALUE)
         );
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
         setBackground(new java.awt.Color(1, 148, 141));
@@ -79,7 +96,7 @@ public class MainGUI extends javax.swing.JFrame {
         navExitBtn.setBackground(new java.awt.Color(2, 61, 84));
         navExitBtn.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         navExitBtn.setForeground(new java.awt.Color(255, 255, 255));
-        navExitBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cross.png"))); // NOI18N
+        navExitBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cross (white).png"))); // NOI18N
         navExitBtn.setText("Exit");
         navExitBtn.setBorder(null);
         navExitBtn.setBorderPainted(false);
@@ -89,9 +106,10 @@ public class MainGUI extends javax.swing.JFrame {
             }
         });
 
-        navQuizBtn.setBackground(new java.awt.Color(1, 148, 141));
+        navQuizBtn.setBackground(new java.awt.Color(2, 61, 84));
         navQuizBtn.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz.png"))); // NOI18N
+        navQuizBtn.setForeground(new java.awt.Color(255, 255, 255));
+        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz (white).png"))); // NOI18N
         navQuizBtn.setText("Quiz");
         navQuizBtn.setBorder(null);
         navQuizBtn.setBorderPainted(false);
@@ -102,9 +120,10 @@ public class MainGUI extends javax.swing.JFrame {
             }
         });
 
-        navTipBtn.setBackground(new java.awt.Color(1, 148, 141));
+        navTipBtn.setBackground(new java.awt.Color(2, 61, 84));
         navTipBtn.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea.png"))); // NOI18N
+        navTipBtn.setForeground(new java.awt.Color(255, 255, 255));
+        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea (white).png"))); // NOI18N
         navTipBtn.setText("Tips");
         navTipBtn.setBorder(null);
         navTipBtn.setBorderPainted(false);
@@ -114,9 +133,10 @@ public class MainGUI extends javax.swing.JFrame {
             }
         });
 
-        navTrackerBtn.setBackground(new java.awt.Color(1, 148, 141));
+        navTrackerBtn.setBackground(new java.awt.Color(2, 61, 84));
         navTrackerBtn.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard.png"))); // NOI18N
+        navTrackerBtn.setForeground(new java.awt.Color(255, 255, 255));
+        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard (white).png"))); // NOI18N
         navTrackerBtn.setText("Action Tracker");
         navTrackerBtn.setBorder(null);
         navTrackerBtn.setBorderPainted(false);
@@ -146,103 +166,18 @@ public class MainGUI extends javax.swing.JFrame {
             .addGroup(NavbarLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(navQuizBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(navTipBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(navTrackerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(300, 300, 300)
+                .addGap(335, 335, 335)
                 .addComponent(navExitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         Background.setBackground(new java.awt.Color(1, 148, 141));
         Background.setLayout(new java.awt.CardLayout());
-
-        TrackerPanel.setBackground(new java.awt.Color(1, 148, 141));
-
-        deleteBTN.setText("Delete");
-        deleteBTN.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteBTNActionPerformed(evt);
-            }
-        });
-
-        addBTN1.setText("Add");
-        addBTN1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addBTN1ActionPerformed(evt);
-            }
-        });
-
-        nextBTN.setText("Next");
-        nextBTN.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextBTNActionPerformed(evt);
-            }
-        });
-
-        jTextField1.setText("jTextField1");
-
-        label1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        label1.setForeground(new java.awt.Color(242, 242, 242));
-        label1.setName(""); // NOI18N
-        label1.setText("Action Taken");
-
-        label2.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
-        label2.setForeground(new java.awt.Color(255, 255, 255));
-        label2.setName(""); // NOI18N
-        label2.setText("Action Tracker");
-
-        javax.swing.GroupLayout TrackerPanelLayout = new javax.swing.GroupLayout(TrackerPanel);
-        TrackerPanel.setLayout(TrackerPanelLayout);
-        TrackerPanelLayout.setHorizontalGroup(
-            TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TrackerPanelLayout.createSequentialGroup()
-                .addGap(88, 88, 88)
-                .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(82, 82, 82))
-            .addGroup(TrackerPanelLayout.createSequentialGroup()
-                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(TrackerPanelLayout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(TrackerPanelLayout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(22, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TrackerPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(165, 165, 165))
-        );
-        TrackerPanelLayout.setVerticalGroup(
-            TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TrackerPanelLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22)
-                .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(59, 59, 59)
-                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(label1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29))
-        );
-
-        Background.add(TrackerPanel, "card3");
 
         TipPanel.setBackground(new java.awt.Color(1, 148, 141));
 
@@ -348,6 +283,92 @@ public class MainGUI extends javax.swing.JFrame {
 
         Background.add(QuizPanel, "card4");
 
+        TrackerPanel.setBackground(new java.awt.Color(1, 148, 141));
+
+        deleteBTN.setText("Delete");
+        deleteBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteBTNActionPerformed(evt);
+            }
+        });
+
+        addBTN1.setText("Add");
+        addBTN1.setBorder(null);
+        addBTN1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addBTN1ActionPerformed(evt);
+            }
+        });
+
+        nextBTN.setText("Next");
+        nextBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextBTNActionPerformed(evt);
+            }
+        });
+
+        jTextField1.setText("jTextField1");
+
+        label1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        label1.setForeground(new java.awt.Color(242, 242, 242));
+        label1.setName(""); // NOI18N
+        label1.setText("Action Taken");
+
+        label2.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
+        label2.setForeground(new java.awt.Color(255, 255, 255));
+        label2.setName(""); // NOI18N
+        label2.setText("Action Tracker");
+
+        javax.swing.GroupLayout TrackerPanelLayout = new javax.swing.GroupLayout(TrackerPanel);
+        TrackerPanel.setLayout(TrackerPanelLayout);
+        TrackerPanelLayout.setHorizontalGroup(
+            TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(TrackerPanelLayout.createSequentialGroup()
+                .addGap(88, 88, 88)
+                .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(82, 82, 82))
+            .addGroup(TrackerPanelLayout.createSequentialGroup()
+                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(TrackerPanelLayout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(TrackerPanelLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(22, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TrackerPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(165, 165, 165))
+        );
+        TrackerPanelLayout.setVerticalGroup(
+            TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(TrackerPanelLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22)
+                .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(59, 59, 59)
+                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(label1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29))
+        );
+
+        Background.add(TrackerPanel, "card3");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -397,12 +418,17 @@ public class MainGUI extends javax.swing.JFrame {
         Background.repaint();
         Background.revalidate();
         
+        //changing the colour of the icon
+        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard.png")));
+        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz (white).png")));
+        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea.png")));
+        
         //changig the colour of the background
         navTipBtn.setBackground(new Color(2, 61, 84));
         navTrackerBtn.setBackground(new Color(2, 61, 84));
         navQuizBtn.setBackground(new Color(1,148,141));
         
-        // changing the color of the text        
+        // changing the colour of the text        
         navQuizBtn.setForeground(new Color(255, 255, 255));
         navTipBtn.setForeground(new Color(0, 0, 0));
         navTrackerBtn.setForeground(new Color(0, 0, 0));
@@ -415,12 +441,17 @@ public class MainGUI extends javax.swing.JFrame {
         Background.repaint();
         Background.revalidate();
         
+        //changing the colour of the icon
+        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard.png")));
+        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz.png")));
+        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea (white).png")));
+        
         //changig the colour of the background
         navTipBtn.setBackground(new Color(1,148,141));
         navTrackerBtn.setBackground(new Color(2, 61, 84));
         navQuizBtn.setBackground(new Color(2, 61, 84));
         
-        // changing the color of the text
+        // changing the colour of the text
         navTipBtn.setForeground(new Color(255, 255, 255));
         navTrackerBtn.setForeground(new Color(0, 0, 0));
         navQuizBtn.setForeground(new Color(0, 0, 0));
@@ -432,13 +463,18 @@ public class MainGUI extends javax.swing.JFrame {
         Background.add(TrackerPanel);
         Background.repaint();
         Background.revalidate();
-         
+               
+        //changing the colour of the icon
+        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard (white).png")));
+        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz.png")));
+        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea.png")));
+        
         //changig the colour of the background
         navTipBtn.setBackground(new Color(2, 61, 84));
         navTrackerBtn.setBackground(new Color(1,148,141));
         navQuizBtn.setBackground(new Color(2, 61, 84));
         
-        // changing the color of the text        
+        // changing the colour of the text        
         navTrackerBtn.setForeground(new Color(255, 255, 255));
         navTipBtn.setForeground(new Color(0, 0, 0));
         navQuizBtn.setForeground(new Color(0, 0, 0));
@@ -494,6 +530,7 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JPanel background;
     private javax.swing.JToggleButton deleteBTN;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private java.awt.Label label1;
