@@ -4,6 +4,8 @@
  */
 package greenshift;
 
+import java.awt.Color;
+
 /**
  *
  * @author bloxd
@@ -29,10 +31,11 @@ public class MainGUI extends javax.swing.JFrame {
         background = new javax.swing.JPanel();
         textArea1 = new java.awt.TextArea();
         Navbar = new javax.swing.JPanel();
-        navHomeBtn = new javax.swing.JButton();
+        navExitBtn = new javax.swing.JButton();
         navQuizBtn = new javax.swing.JButton();
         navTipBtn = new javax.swing.JButton();
         navTrackerBtn = new javax.swing.JButton();
+        label3 = new java.awt.Label();
         Background = new javax.swing.JPanel();
         TrackerPanel = new javax.swing.JPanel();
         deleteBTN = new javax.swing.JToggleButton();
@@ -73,16 +76,26 @@ public class MainGUI extends javax.swing.JFrame {
 
         Navbar.setBackground(new java.awt.Color(2, 61, 84));
 
-        navHomeBtn.setBackground(new java.awt.Color(1, 148, 141));
-        navHomeBtn.setText("Home page");
-        navHomeBtn.addActionListener(new java.awt.event.ActionListener() {
+        navExitBtn.setBackground(new java.awt.Color(2, 61, 84));
+        navExitBtn.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        navExitBtn.setForeground(new java.awt.Color(255, 255, 255));
+        navExitBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cross.png"))); // NOI18N
+        navExitBtn.setText("Exit");
+        navExitBtn.setBorder(null);
+        navExitBtn.setBorderPainted(false);
+        navExitBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navHomeBtnActionPerformed(evt);
+                navExitBtnActionPerformed(evt);
             }
         });
 
         navQuizBtn.setBackground(new java.awt.Color(1, 148, 141));
-        navQuizBtn.setText("Quiz page");
+        navQuizBtn.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz.png"))); // NOI18N
+        navQuizBtn.setText("Quiz");
+        navQuizBtn.setBorder(null);
+        navQuizBtn.setBorderPainted(false);
+        navQuizBtn.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         navQuizBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navQuizBtnActionPerformed(evt);
@@ -90,7 +103,11 @@ public class MainGUI extends javax.swing.JFrame {
         });
 
         navTipBtn.setBackground(new java.awt.Color(1, 148, 141));
-        navTipBtn.setText("Tips Page");
+        navTipBtn.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea.png"))); // NOI18N
+        navTipBtn.setText("Tips");
+        navTipBtn.setBorder(null);
+        navTipBtn.setBorderPainted(false);
         navTipBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navTipBtnActionPerformed(evt);
@@ -98,39 +115,45 @@ public class MainGUI extends javax.swing.JFrame {
         });
 
         navTrackerBtn.setBackground(new java.awt.Color(1, 148, 141));
-        navTrackerBtn.setText("Actions Tracker");
+        navTrackerBtn.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard.png"))); // NOI18N
+        navTrackerBtn.setText("Action Tracker");
+        navTrackerBtn.setBorder(null);
+        navTrackerBtn.setBorderPainted(false);
         navTrackerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navTrackerBtnActionPerformed(evt);
             }
         });
 
+        label3.setAlignment(java.awt.Label.CENTER);
+        label3.setFont(new java.awt.Font("Dialog", 1, 32)); // NOI18N
+        label3.setForeground(new java.awt.Color(255, 255, 255));
+        label3.setText("GreenShift");
+
         javax.swing.GroupLayout NavbarLayout = new javax.swing.GroupLayout(Navbar);
         Navbar.setLayout(NavbarLayout);
         NavbarLayout.setHorizontalGroup(
             NavbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(NavbarLayout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addGroup(NavbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(navTrackerBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                    .addGroup(NavbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(navTipBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(navQuizBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(navHomeBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)))
-                .addContainerGap(60, Short.MAX_VALUE))
+            .addComponent(navTrackerBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+            .addComponent(navTipBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(navQuizBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(label3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(navExitBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         NavbarLayout.setVerticalGroup(
             NavbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(NavbarLayout.createSequentialGroup()
-                .addGap(94, 94, 94)
-                .addComponent(navHomeBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(navQuizBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(navTipBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(navTrackerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(226, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45)
+                .addComponent(navQuizBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(navTipBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(navTrackerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(300, 300, 300)
+                .addComponent(navExitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         Background.setBackground(new java.awt.Color(1, 148, 141));
@@ -212,7 +235,7 @@ public class MainGUI extends javax.swing.JFrame {
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(label1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -246,10 +269,10 @@ public class MainGUI extends javax.swing.JFrame {
         questionTa.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jScrollPane1.setViewportView(questionTa);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Climate Quiz");
-        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         answerOne.setText("Answer 1");
         answerOne.addActionListener(new java.awt.event.ActionListener() {
@@ -275,41 +298,40 @@ public class MainGUI extends javax.swing.JFrame {
         QuizPanelLayout.setHorizontalGroup(
             QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(QuizPanelLayout.createSequentialGroup()
-                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(37, 37, 37)
+                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(QuizPanelLayout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                                .addComponent(answerThree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(QuizPanelLayout.createSequentialGroup()
-                                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-                                        .addComponent(answerThree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(QuizPanelLayout.createSequentialGroup()
-                                        .addGap(62, 62, 62)
-                                        .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
-                                        .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(69, 69, 69))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
-                                        .addComponent(answerFour, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(39, 39, 39))
-                                    .addComponent(answerTwo, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                    .addGroup(QuizPanelLayout.createSequentialGroup()
-                        .addGap(159, 159, 159)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(62, 62, 62)
+                                .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
+                                .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(69, 69, 69))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
+                                .addComponent(answerFour, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(39, 39, 39))
+                            .addComponent(answerTwo, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(44, Short.MAX_VALUE))
+            .addGroup(QuizPanelLayout.createSequentialGroup()
+                .addGap(158, 158, 158)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         QuizPanelLayout.setVerticalGroup(
             QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(QuizPanelLayout.createSequentialGroup()
-                .addGap(39, 39, 39)
+                .addGap(16, 16, 16)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(41, 41, 41)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
                     .addComponent(answerTwo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -321,7 +343,7 @@ public class MainGUI extends javax.swing.JFrame {
                 .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(121, Short.MAX_VALUE))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
 
         Background.add(QuizPanel, "card4");
@@ -338,10 +360,8 @@ public class MainGUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(Navbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addComponent(Background, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(Navbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -363,12 +383,12 @@ public class MainGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_answerOneActionPerformed
 
-    private void navHomeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navHomeBtnActionPerformed
+    private void navExitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navExitBtnActionPerformed
         // TODO add your handling code here:
         this.dispose();
         new StartPageGUI().setVisible(true);
 
-    }//GEN-LAST:event_navHomeBtnActionPerformed
+    }//GEN-LAST:event_navExitBtnActionPerformed
 
     private void navQuizBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navQuizBtnActionPerformed
         // TODO add your handling code here:
@@ -376,6 +396,16 @@ public class MainGUI extends javax.swing.JFrame {
         Background.add(QuizPanel);
         Background.repaint();
         Background.revalidate();
+        
+        //changig the colour of the background
+        navTipBtn.setBackground(new Color(2, 61, 84));
+        navTrackerBtn.setBackground(new Color(2, 61, 84));
+        navQuizBtn.setBackground(new Color(1,148,141));
+        
+        // changing the color of the text        
+        navQuizBtn.setForeground(new Color(255, 255, 255));
+        navTipBtn.setForeground(new Color(0, 0, 0));
+        navTrackerBtn.setForeground(new Color(0, 0, 0));
     }//GEN-LAST:event_navQuizBtnActionPerformed
 
     private void navTipBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navTipBtnActionPerformed
@@ -384,6 +414,16 @@ public class MainGUI extends javax.swing.JFrame {
         Background.add(TipPanel);
         Background.repaint();
         Background.revalidate();
+        
+        //changig the colour of the background
+        navTipBtn.setBackground(new Color(1,148,141));
+        navTrackerBtn.setBackground(new Color(2, 61, 84));
+        navQuizBtn.setBackground(new Color(2, 61, 84));
+        
+        // changing the color of the text
+        navTipBtn.setForeground(new Color(255, 255, 255));
+        navTrackerBtn.setForeground(new Color(0, 0, 0));
+        navQuizBtn.setForeground(new Color(0, 0, 0));
     }//GEN-LAST:event_navTipBtnActionPerformed
 
     private void navTrackerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navTrackerBtnActionPerformed
@@ -392,6 +432,16 @@ public class MainGUI extends javax.swing.JFrame {
         Background.add(TrackerPanel);
         Background.repaint();
         Background.revalidate();
+         
+        //changig the colour of the background
+        navTipBtn.setBackground(new Color(2, 61, 84));
+        navTrackerBtn.setBackground(new Color(1,148,141));
+        navQuizBtn.setBackground(new Color(2, 61, 84));
+        
+        // changing the color of the text        
+        navTrackerBtn.setForeground(new Color(255, 255, 255));
+        navTipBtn.setForeground(new Color(0, 0, 0));
+        navQuizBtn.setForeground(new Color(0, 0, 0));
     }//GEN-LAST:event_navTrackerBtnActionPerformed
 
     /**
@@ -448,7 +498,8 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private java.awt.Label label1;
     private java.awt.Label label2;
-    private javax.swing.JButton navHomeBtn;
+    private java.awt.Label label3;
+    private javax.swing.JButton navExitBtn;
     private javax.swing.JButton navQuizBtn;
     private javax.swing.JButton navTipBtn;
     private javax.swing.JButton navTrackerBtn;
