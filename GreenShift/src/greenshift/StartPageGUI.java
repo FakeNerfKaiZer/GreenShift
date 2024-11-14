@@ -131,6 +131,7 @@ public class StartPageGUI extends javax.swing.JFrame {
 
     private void homeBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBTNActionPerformed
         // TODO add your handling code here:
+        this.dispose();
         new MainGUI().setVisible(true);
     }//GEN-LAST:event_homeBTNActionPerformed
 
