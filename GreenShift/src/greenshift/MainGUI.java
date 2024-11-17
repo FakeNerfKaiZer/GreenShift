@@ -422,9 +422,9 @@ public class MainGUI extends javax.swing.JFrame {
         Background.revalidate();
         
         //changing the colour of the icon
-        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard.png")));
-        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz (white).png")));
-        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea.png")));
+        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard (white).png")));
+        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz.png")));
+        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea (white).png")));
         
         //changig the colour of the background
         navTipBtn.setBackground(new Color(2, 61, 84));
@@ -432,9 +432,9 @@ public class MainGUI extends javax.swing.JFrame {
         navQuizBtn.setBackground(new Color(1,148,141));
         
         // changing the colour of the text        
-        navQuizBtn.setForeground(new Color(255, 255, 255));
-        navTipBtn.setForeground(new Color(0, 0, 0));
-        navTrackerBtn.setForeground(new Color(0, 0, 0));
+        navQuizBtn.setForeground(new Color(0, 0, 0));
+        navTipBtn.setForeground(new Color(255, 255, 255));
+        navTrackerBtn.setForeground(new Color(255, 255, 255));
     }//GEN-LAST:event_navQuizBtnActionPerformed
 
     private void navTipBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navTipBtnActionPerformed
@@ -445,9 +445,9 @@ public class MainGUI extends javax.swing.JFrame {
         Background.revalidate();
         
         //changing the colour of the icon
-        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard.png")));
-        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz.png")));
-        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea (white).png")));
+        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard (white).png")));
+        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz (white).png")));
+        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea.png")));
         
         //changig the colour of the background
         navTipBtn.setBackground(new Color(1,148,141));
@@ -455,9 +455,9 @@ public class MainGUI extends javax.swing.JFrame {
         navQuizBtn.setBackground(new Color(2, 61, 84));
         
         // changing the colour of the text
-        navTipBtn.setForeground(new Color(255, 255, 255));
-        navTrackerBtn.setForeground(new Color(0, 0, 0));
-        navQuizBtn.setForeground(new Color(0, 0, 0));
+        navTipBtn.setForeground(new Color(0,0,0));
+        navTrackerBtn.setForeground(new Color(255, 255, 255));
+        navQuizBtn.setForeground(new Color(255, 255, 255));
     }//GEN-LAST:event_navTipBtnActionPerformed
 
     private void navTrackerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navTrackerBtnActionPerformed
@@ -468,9 +468,9 @@ public class MainGUI extends javax.swing.JFrame {
         Background.revalidate();
                
         //changing the colour of the icon
-        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard (white).png")));
-        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz.png")));
-        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea.png")));
+        navTrackerBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/clipboard.png")));
+        navQuizBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/quiz (white).png")));
+        navTipBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/idea (white).png")));
         
         //changig the colour of the background
         navTipBtn.setBackground(new Color(2, 61, 84));
@@ -478,9 +478,9 @@ public class MainGUI extends javax.swing.JFrame {
         navQuizBtn.setBackground(new Color(2, 61, 84));
         
         // changing the colour of the text        
-        navTrackerBtn.setForeground(new Color(255, 255, 255));
-        navTipBtn.setForeground(new Color(0, 0, 0));
-        navQuizBtn.setForeground(new Color(0, 0, 0));
+        navTrackerBtn.setForeground(new Color(0,0,0));
+        navTipBtn.setForeground(new Color(255, 255, 255));
+        navQuizBtn.setForeground(new Color(255, 255, 255));
     }//GEN-LAST:event_navTrackerBtnActionPerformed
 
     /**
