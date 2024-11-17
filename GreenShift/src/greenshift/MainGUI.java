@@ -178,6 +178,7 @@ public class MainGUI extends javax.swing.JFrame {
         WelcomePanel.setBackground(new java.awt.Color(1, 148, 141));
 
         welcomeLabel.setBackground(new java.awt.Color(0, 158, 130));
+        welcomeLabel.setEditable(false);
         welcomeLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         welcomeLabel.setForeground(new java.awt.Color(255, 255, 255));
 
@@ -186,8 +187,8 @@ public class MainGUI extends javax.swing.JFrame {
         WelcomePanelLayout.setHorizontalGroup(
             WelcomePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, WelcomePanelLayout.createSequentialGroup()
-                .addContainerGap(34, Short.MAX_VALUE)
-                .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE)
+                .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 633, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23))
         );
         WelcomePanelLayout.setVerticalGroup(
