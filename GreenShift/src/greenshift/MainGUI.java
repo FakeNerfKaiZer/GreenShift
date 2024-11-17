@@ -6,6 +6,7 @@ package greenshift;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,6 +23,22 @@ public class MainGUI extends javax.swing.JFrame {
      */
     public MainGUI() {        
         initComponents();
+       
+        welcomeLabel.setText("Welcome to GreenShift \n" +
+                     "Your Personal Climate Impact Tracker\n\n" +
+                     "Thank you for joining us on this journey toward a healthier planet!\n" +
+                     "GreenShift is designed to help you make small, everyday changes\n" +
+                     "that add up to a big difference in tackling climate change.\n\n" +
+                     "What You Can Do Here:\n" +
+                     "• Track Your Actions: Log eco-friendly activities you have done.\n" +
+                     "• Get Inspired: Discover simple tips to reduce your carbon footprint.\n" +
+                     "• Learn About Yourself: Take a fun quiz to evaluate your lifestyle.\n\n" +
+                     "Together, we can make the shift toward a greener future.\n\n" +
+                     "Let’s get started! Pick an app from the navbar to begin");
+
+
+
+
     }
 
     
@@ -42,7 +59,7 @@ public class MainGUI extends javax.swing.JFrame {
         label3 = new java.awt.Label();
         Background = new javax.swing.JPanel();
         WelcomePanel = new javax.swing.JPanel();
-        jTextField2 = new javax.swing.JTextField();
+        welcomeLabel = new java.awt.TextArea();
         TipPanel = new javax.swing.JPanel();
         QuizPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -160,23 +177,25 @@ public class MainGUI extends javax.swing.JFrame {
 
         WelcomePanel.setBackground(new java.awt.Color(1, 148, 141));
 
-        jTextField2.setText("jTextField2");
+        welcomeLabel.setBackground(new java.awt.Color(0, 158, 130));
+        welcomeLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        welcomeLabel.setForeground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout WelcomePanelLayout = new javax.swing.GroupLayout(WelcomePanel);
         WelcomePanel.setLayout(WelcomePanelLayout);
         WelcomePanelLayout.setHorizontalGroup(
             WelcomePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(WelcomePanelLayout.createSequentialGroup()
-                .addGap(294, 294, 294)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(312, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, WelcomePanelLayout.createSequentialGroup()
+                .addContainerGap(34, Short.MAX_VALUE)
+                .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23))
         );
         WelcomePanelLayout.setVerticalGroup(
             WelcomePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, WelcomePanelLayout.createSequentialGroup()
-                .addContainerGap(439, Short.MAX_VALUE)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(213, 213, 213))
+            .addGroup(WelcomePanelLayout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 594, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         Background.add(WelcomePanel, "card5");
@@ -408,12 +427,21 @@ public class MainGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_answerOneActionPerformed
 
     private void navExitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navExitBtnActionPerformed
-        // TODO add your handling code here:
-        this.dispose();
-        new StartPageGUI().setVisible(true);
+         // Show a confirmation dialog with a message
+        int option = JOptionPane.showConfirmDialog(
+                this,  // Parent component
+                "Thank you for using GreenShift. Are you sure you want to exit?", // Message
+                "Exit Confirmation",  // Dialog title
+                JOptionPane.YES_NO_OPTION,  // Option buttons (Yes and No)
+                JOptionPane.INFORMATION_MESSAGE); // Icon type
 
+        // Check user's choice
+        if (option == JOptionPane.YES_OPTION) {
+            // If the user selects "Yes", dispose of the current window
+            this.dispose();
+        }
     }//GEN-LAST:event_navExitBtnActionPerformed
-
+    
     private void navQuizBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navQuizBtnActionPerformed
         // TODO add your handling code here:
         Background.removeAll();
@@ -535,7 +563,6 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private java.awt.Label label1;
     private java.awt.Label label2;
     private java.awt.Label label3;
@@ -548,5 +575,6 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JButton prevQuestionBtn;
     private javax.swing.JTextArea questionTa;
     private java.awt.TextArea textArea2;
+    private java.awt.TextArea welcomeLabel;
     // End of variables declaration//GEN-END:variables
 }
