@@ -6,6 +6,13 @@ package greenshift;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,6 +20,9 @@ import javax.swing.JOptionPane;
  * @author bloxd
  */
 public class MainGUI extends javax.swing.JFrame {
+    
+    ArrayList <ClimateAction> actionList; 
+    int listIndex;
     
     public void showWelcomePanel() {
     CardLayout cardLayout = (CardLayout) Background.getLayout();
@@ -23,7 +33,11 @@ public class MainGUI extends javax.swing.JFrame {
      */
     public MainGUI() {        
         initComponents();
-       
+        
+        actionList = new ArrayList<>(); //create the arraylist
+        listIndex = 0; 
+        
+        loadTracker();
         welcomeLabel.setText("Welcome to GreenShift \n" +
                      "Your Personal Climate Impact Tracker\n\n" +
                      "Thank you for joining us on this journey toward a healthier planet!\n" +
@@ -35,12 +49,59 @@ public class MainGUI extends javax.swing.JFrame {
                      "• Learn About Yourself: Take a fun quiz to evaluate your lifestyle.\n\n" +
                      "Together, we can make the shift toward a greener future.\n\n" +
                      "Let’s get started! Pick an app from the navbar to begin");
-
-
-
-
     }
 
+    private void loadTracker(){  //a method to just read in and load list into the ArrayList
+        File f;
+        FileInputStream fStream;
+        ObjectInputStream oStream;
+        try{
+            f = new File("output.dat");
+            fStream = new FileInputStream(f); 
+            oStream = new ObjectInputStream(fStream);
+            
+            actionList = (ArrayList<ClimateAction>)oStream.readObject();
+            
+            oStream.close();
+        }
+        catch(IOException |ClassNotFoundException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void saveTracker(){//a method to just save the ArrayList to file
+        File f;
+        FileOutputStream fStream;
+        ObjectOutputStream oStream;
+        
+        try{
+            f = new File("output.dat");
+            fStream = new FileOutputStream(f);
+            oStream = new ObjectOutputStream(fStream);
+            
+            oStream.writeObject(actionList);
+            oStream.close();
+             trackerDisplay.append("\nAction tracker saved");
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void displayAll(){ //method to display all 
+        trackerDisplay.setText(""); //clear the displayTA
+        if(actionList.isEmpty()){
+            trackerDisplay.setText("Nothing in yout tracker yet!");
+        }else{
+            ClimateAction temp; //create a temp obj to store items from the arraylist
+            for(int i = 0; i < actionList.size(); i++){
+                temp = actionList.get(i);
+                trackerDisplay.append(temp.toString()+"\n");
+            } 
+        }        
+    }
+    
+    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -75,8 +136,8 @@ public class MainGUI extends javax.swing.JFrame {
         deleteBTN = new javax.swing.JToggleButton();
         addBTN1 = new javax.swing.JToggleButton();
         nextBTN = new javax.swing.JButton();
-        textArea2 = new java.awt.TextArea();
-        jTextField1 = new javax.swing.JTextField();
+        trackerDisplay = new java.awt.TextArea();
+        actionInput = new javax.swing.JTextField();
         label1 = new java.awt.Label();
         label2 = new java.awt.Label();
 
@@ -330,7 +391,7 @@ public class MainGUI extends javax.swing.JFrame {
             }
         });
 
-        jTextField1.setText("jTextField1");
+        actionInput.setText("jTextField1");
 
         label1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         label1.setForeground(new java.awt.Color(242, 242, 242));
@@ -357,13 +418,13 @@ public class MainGUI extends javax.swing.JFrame {
                     .addGroup(TrackerPanelLayout.createSequentialGroup()
                         .addGap(34, 34, 34)
                         .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(TrackerPanelLayout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(actionInput, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(22, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TrackerPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -376,13 +437,13 @@ public class MainGUI extends javax.swing.JFrame {
                 .addGap(23, 23, 23)
                 .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22)
-                .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(59, 59, 59)
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(label1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(actionInput, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -413,14 +474,44 @@ public class MainGUI extends javax.swing.JFrame {
 
     private void deleteBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBTNActionPerformed
         // TODO add your handling code here:
+        //search for an item
+        ClimateAction temp;
+        String searchTerm = JOptionPane.showInputDialog(null, "Enter task name to delete");
+        for(int i = 0; i < actionList.size(); i++){
+            temp = actionList.get(i);
+            if(searchTerm.equalsIgnoreCase(temp.getName())){
+                actionList.remove(i); //delete it
+                saveTracker(); //save list again
+            }
+        }
+         trackerDisplay.append("\nDeleted from tracker!");
     }//GEN-LAST:event_deleteBTNActionPerformed
 
     private void addBTN1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBTN1ActionPerformed
         // TODO add your handling code here:
+        // TODO add your handling code here:
+        ClimateAction temp;  //temp obj
+        String name = actionInput.getText();
+        temp = new ClimateAction(name);
+        
+        actionList.add(temp);
+        saveTracker();  //call my save method aove
+        trackerDisplay.append("\nSaved to tracker!");
     }//GEN-LAST:event_addBTN1ActionPerformed
 
     private void nextBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBTNActionPerformed
         // TODO add your handling code here:
+        if(!actionList.isEmpty()){
+            ClimateAction temp = actionList.get(listIndex);
+            trackerDisplay.setText(temp.toString());            
+            listIndex++; //increase to move to next item in todo list
+            ///*** danger need to check we haven't gone over the size of the list!
+            if(listIndex >= actionList.size()){ 
+                listIndex = 0; //if bigger than list, start at the 0 index again!
+            }
+        }else{
+             trackerDisplay.setText("Nothing in your tracker yet!");
+        }
     }//GEN-LAST:event_nextBTNActionPerformed
 
     private void answerOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerOneActionPerformed
@@ -555,6 +646,7 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JPanel TipPanel;
     private javax.swing.JPanel TrackerPanel;
     private javax.swing.JPanel WelcomePanel;
+    private javax.swing.JTextField actionInput;
     private javax.swing.JToggleButton addBTN1;
     private javax.swing.JRadioButton answerFour;
     private javax.swing.JRadioButton answerOne;
@@ -563,7 +655,6 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JToggleButton deleteBTN;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private java.awt.Label label1;
     private java.awt.Label label2;
     private java.awt.Label label3;
@@ -575,7 +666,7 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JButton nextQuestionBtn;
     private javax.swing.JButton prevQuestionBtn;
     private javax.swing.JTextArea questionTa;
-    private java.awt.TextArea textArea2;
+    private java.awt.TextArea trackerDisplay;
     private java.awt.TextArea welcomeLabel;
     // End of variables declaration//GEN-END:variables
 }

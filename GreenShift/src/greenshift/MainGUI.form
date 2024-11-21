@@ -468,7 +468,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="textArea2" min="-2" pref="606" max="-2" attributes="0"/>
+                                  <Component id="trackerDisplay" min="-2" pref="606" max="-2" attributes="0"/>
                                   <Component id="nextBTN" min="-2" pref="108" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -476,7 +476,7 @@
                               <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                               <Component id="label1" min="-2" pref="116" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jTextField1" min="-2" pref="507" max="-2" attributes="0"/>
+                              <Component id="actionInput" min="-2" pref="507" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace pref="22" max="32767" attributes="0"/>
@@ -494,13 +494,13 @@
                       <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                       <Component id="label2" min="-2" pref="57" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
-                      <Component id="textArea2" min="-2" pref="289" max="-2" attributes="0"/>
+                      <Component id="trackerDisplay" min="-2" pref="289" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="nextBTN" min="-2" pref="33" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="label1" max="32767" attributes="0"/>
-                          <Component id="jTextField1" min="-2" pref="41" max="-2" attributes="0"/>
+                          <Component id="actionInput" min="-2" pref="41" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -543,9 +543,9 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nextBTNActionPerformed"/>
               </Events>
             </Component>
-            <Component class="java.awt.TextArea" name="textArea2">
+            <Component class="java.awt.TextArea" name="trackerDisplay">
             </Component>
-            <Component class="javax.swing.JTextField" name="jTextField1">
+            <Component class="javax.swing.JTextField" name="actionInput">
               <Properties>
                 <Property name="text" type="java.lang.String" value="jTextField1"/>
               </Properties>
