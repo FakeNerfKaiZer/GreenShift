@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
  * @author bloxd
  */
 public class MainGUI extends javax.swing.JFrame {
+    
     private QuizApp quizApp;
     ArrayList <ClimateAction> actionList; 
     int listIndex;
@@ -36,6 +37,11 @@ public class MainGUI extends javax.swing.JFrame {
      */
     public MainGUI() {        
         initComponents();
+        
+        answerBtnGroup.add(answerOne);
+        answerBtnGroup.add(answerTwo);
+        answerBtnGroup.add(answerThree);
+        answerBtnGroup.add(answerFour);
         
         actionList = new ArrayList<>(); //create the arraylist
         listIndex = 0;
@@ -117,6 +123,9 @@ public class MainGUI extends javax.swing.JFrame {
     answerTwo.setText(options[1]);
     answerThree.setText(options[2]);
     answerFour.setText(options[3]);
+    
+    // Clears previous answer seleciton when loading a new question
+    answerBtnGroup.clearSelection();    
 
     // Restore previous selection
     int selectedAnswer = quizApp.getUserAnswer();
@@ -183,6 +192,7 @@ private List<Question> loadQuestionsFromFile(String filename) {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        answerBtnGroup = new javax.swing.ButtonGroup();
         Navbar = new javax.swing.JPanel();
         navExitBtn = new javax.swing.JButton();
         navQuizBtn = new javax.swing.JButton();
@@ -687,6 +697,10 @@ private List<Question> loadQuestionsFromFile(String filename) {
     private void nextQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextQuestionBtnActionPerformed
         // TODO add your handling code here:
     saveAnswer();
+    
+    // Clear all radio button selections before moving to next question
+    answerBtnGroup.clearSelection();    
+    
     if (quizApp.hasNextQuestion()) {
         quizApp.nextQuestion();
         loadQuestion();
@@ -698,10 +712,10 @@ private List<Question> loadQuestionsFromFile(String filename) {
     private void prevQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevQuestionBtnActionPerformed
         // TODO add your handling code here:
     saveAnswer();
-    if (quizApp.hasPreviousQuestion()) {
-        quizApp.previousQuestion();
-        loadQuestion();
-    }
+        if (quizApp.hasPreviousQuestion()) {
+            quizApp.previousQuestion();
+            loadQuestion();
+        }
     }//GEN-LAST:event_prevQuestionBtnActionPerformed
 
     /**
@@ -738,6 +752,7 @@ private List<Question> loadQuestionsFromFile(String filename) {
                 new MainGUI().setVisible(true);
             }
         });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -749,6 +764,7 @@ private List<Question> loadQuestionsFromFile(String filename) {
     private javax.swing.JPanel WelcomePanel;
     private javax.swing.JTextField actionInput;
     private javax.swing.JToggleButton addBTN1;
+    private javax.swing.ButtonGroup answerBtnGroup;
     private javax.swing.JRadioButton answerFour;
     private javax.swing.JRadioButton answerOne;
     private javax.swing.JRadioButton answerThree;
