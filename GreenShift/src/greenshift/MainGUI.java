@@ -6,13 +6,16 @@ package greenshift;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,7 +23,7 @@ import javax.swing.JOptionPane;
  * @author bloxd
  */
 public class MainGUI extends javax.swing.JFrame {
-    
+    private QuizApp quizApp;
     ArrayList <ClimateAction> actionList; 
     int listIndex;
     
@@ -35,7 +38,11 @@ public class MainGUI extends javax.swing.JFrame {
         initComponents();
         
         actionList = new ArrayList<>(); //create the arraylist
-        listIndex = 0; 
+        listIndex = 0;
+        
+        List<Question> questions = loadQuestionsFromFile("questions.txt"); //loads questions from txt file
+        quizApp = new QuizApp(questions);
+        loadQuestion(); //
         
         loadTracker();
         welcomeLabel.setText("Welcome to GreenShift \n" +
@@ -101,7 +108,71 @@ public class MainGUI extends javax.swing.JFrame {
         }        
     }
     
+    ///////////////////////////////////////////////////////////////////////
+    private void loadQuestion() {
+    Question currentQuestion = quizApp.getCurrentQuestion();
+    questionTa.setText(currentQuestion.getQuestionText());
+    String[] options = currentQuestion.getAnswers();
+    answerOne.setText(options[0]);
+    answerTwo.setText(options[1]);
+    answerThree.setText(options[2]);
+    answerFour.setText(options[3]);
+
+    // Restore previous selection
+    int selectedAnswer = quizApp.getUserAnswer();
+    if (selectedAnswer != -1) {
+        switch (selectedAnswer) {
+            case 0 -> answerOne.setSelected(true);
+            case 1 -> answerTwo.setSelected(true);
+            case 2 -> answerThree.setSelected(true);
+            case 3 -> answerFour.setSelected(true);
+        }
+    }
+}
+
+private void saveAnswer() {
+    if (answerOne.isSelected()) {
+        quizApp.setUserAnswer(0);
+    } else if (answerTwo.isSelected()) {
+        quizApp.setUserAnswer(1);
+    } else if (answerThree.isSelected()) {
+        quizApp.setUserAnswer(2);
+    } else if (answerFour.isSelected()) {
+        quizApp.setUserAnswer(3);
+    }
+}
+
+
     
+private List<Question> loadQuestionsFromFile(String filename) {
+    List<Question> questions = new ArrayList<>();
+    try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            // Read the question text
+            String questionText = line;
+
+            // Read the 4 answer options
+            String[] answers = new String[4];
+            for (int i = 0; i < 4; i++) {
+                answers[i] = reader.readLine();
+            }
+
+            // Read the correct answer index
+            int correctAnswer = Integer.parseInt(reader.readLine());
+
+            // Create and add the question object
+            questions.add(new Question(questionText, answers, correctAnswer));
+
+            // Skip blank line (if present)
+            reader.readLine();
+        }
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Error loading questions: " + e.getMessage());
+    }
+    return questions;
+}
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -307,9 +378,19 @@ public class MainGUI extends javax.swing.JFrame {
 
         prevQuestionBtn.setText("Previous");
         prevQuestionBtn.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        prevQuestionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prevQuestionBtnActionPerformed(evt);
+            }
+        });
 
         nextQuestionBtn.setText("Next");
         nextQuestionBtn.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        nextQuestionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextQuestionBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout QuizPanelLayout = new javax.swing.GroupLayout(QuizPanel);
         QuizPanel.setLayout(QuizPanelLayout);
@@ -465,7 +546,7 @@ public class MainGUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Background, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(Background, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
             .addComponent(Navbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -602,6 +683,26 @@ public class MainGUI extends javax.swing.JFrame {
         navTipBtn.setForeground(new Color(255, 255, 255));
         navQuizBtn.setForeground(new Color(255, 255, 255));
     }//GEN-LAST:event_navTrackerBtnActionPerformed
+
+    private void nextQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextQuestionBtnActionPerformed
+        // TODO add your handling code here:
+    saveAnswer();
+    if (quizApp.hasNextQuestion()) {
+        quizApp.nextQuestion();
+        loadQuestion();
+    } else {
+        JOptionPane.showMessageDialog(this, "You've completed the quiz!");
+    }
+    }//GEN-LAST:event_nextQuestionBtnActionPerformed
+
+    private void prevQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevQuestionBtnActionPerformed
+        // TODO add your handling code here:
+    saveAnswer();
+    if (quizApp.hasPreviousQuestion()) {
+        quizApp.previousQuestion();
+        loadQuestion();
+    }
+    }//GEN-LAST:event_prevQuestionBtnActionPerformed
 
     /**
      * @param args the command line arguments
