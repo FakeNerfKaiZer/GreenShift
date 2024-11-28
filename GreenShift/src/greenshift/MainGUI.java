@@ -38,6 +38,10 @@ public class MainGUI extends javax.swing.JFrame {
     public MainGUI() {        
         initComponents();
         
+        
+        quizResetBtn.setVisible(false);
+        
+        //btn group for quiz answers, helps with bug fixes
         answerBtnGroup.add(answerOne);
         answerBtnGroup.add(answerTwo);
         answerBtnGroup.add(answerThree);
@@ -114,7 +118,7 @@ public class MainGUI extends javax.swing.JFrame {
         }        
     }
     
-    ///////////////////////////////////////////////////////////////////////
+    ////////////////////Andrei section - quiz things/////////////////////////////////////////////
     private void loadQuestion() {
     Question currentQuestion = quizApp.getCurrentQuestion();
     questionTa.setText(currentQuestion.getQuestionText());
@@ -182,6 +186,29 @@ private List<Question> loadQuestionsFromFile(String filename) {
     return questions;
 }
 
+private void resetQuiz() {
+    // Clear user answers
+    for (int i = 0; i < quizApp.getTotalQuestions(); i++) {
+        quizApp.setUserAnswer(-1);
+    }
+
+    // Reset to the first question
+    quizApp.previousQuestion(); // Ensure it navigates to the start
+    while (quizApp.hasPreviousQuestion()) {
+        quizApp.previousQuestion();
+    }
+
+    // Reload the first question
+    loadQuestion();
+
+    // Reset UI components
+    answerBtnGroup.clearSelection();
+    quizResetBtn.setVisible(false); // Hide reset button
+    nextQuestionBtn.setVisible(true); // Show navigation buttons
+    prevQuestionBtn.setVisible(true);
+}
+
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -213,6 +240,7 @@ private List<Question> loadQuestionsFromFile(String filename) {
         answerFour = new javax.swing.JRadioButton();
         prevQuestionBtn = new javax.swing.JButton();
         nextQuestionBtn = new javax.swing.JButton();
+        quizResetBtn = new javax.swing.JButton();
         TrackerPanel = new javax.swing.JPanel();
         deleteBTN = new javax.swing.JToggleButton();
         addBTN1 = new javax.swing.JToggleButton();
@@ -363,7 +391,7 @@ private List<Question> loadQuestionsFromFile(String filename) {
         questionTa.setEditable(false);
         questionTa.setBackground(new java.awt.Color(255, 255, 255));
         questionTa.setColumns(20);
-        questionTa.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        questionTa.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         questionTa.setRows(5);
         questionTa.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jScrollPane1.setViewportView(questionTa);
@@ -402,6 +430,13 @@ private List<Question> loadQuestionsFromFile(String filename) {
             }
         });
 
+        quizResetBtn.setText("RESET");
+        quizResetBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quizResetBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout QuizPanelLayout = new javax.swing.GroupLayout(QuizPanel);
         QuizPanel.setLayout(QuizPanelLayout);
         QuizPanelLayout.setHorizontalGroup(
@@ -417,7 +452,9 @@ private List<Question> loadQuestionsFromFile(String filename) {
                                 .addComponent(answerThree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(QuizPanelLayout.createSequentialGroup()
                                 .addGap(62, 62, 62)
-                                .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(37, 37, 37)
+                                .addComponent(quizResetBtn)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
@@ -448,11 +485,17 @@ private List<Question> loadQuestionsFromFile(String filename) {
                 .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(answerThree, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(answerFour, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46)
-                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(83, Short.MAX_VALUE))
+                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(QuizPanelLayout.createSequentialGroup()
+                        .addGap(46, 46, 46)
+                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(83, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(quizResetBtn)
+                        .addGap(119, 119, 119))))
         );
 
         Background.add(QuizPanel, "card4");
@@ -695,18 +738,33 @@ private List<Question> loadQuestionsFromFile(String filename) {
     }//GEN-LAST:event_navTrackerBtnActionPerformed
 
     private void nextQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextQuestionBtnActionPerformed
-        // TODO add your handling code here:
-    saveAnswer();
-    
-    // Clear all radio button selections before moving to next question
-    answerBtnGroup.clearSelection();    
-    
-    if (quizApp.hasNextQuestion()) {
-        quizApp.nextQuestion();
-        loadQuestion();
-    } else {
-        JOptionPane.showMessageDialog(this, "You've completed the quiz!");
-    }
+
+        saveAnswer();
+
+        // Clear all radio button selections before moving to next question
+        answerBtnGroup.clearSelection();    
+
+        // Check if it's the final question
+        if (quizApp.hasNextQuestion()) {
+            quizApp.nextQuestion();
+            loadQuestion();
+        }
+        else {
+            // End of the quiz: display the score
+            int score = quizApp.calculateScore();
+            questionTa.setText("Quiz Completed!\nYour score: " + score + "/" + quizApp.getTotalQuestions());
+
+            // Show the reset button
+            quizResetBtn.setVisible(true);
+
+            // Hide next/prev buttons and answers
+            answerFour.setVisible(false);
+            answerThree.setVisible(false);
+            answerTwo.setVisible(false);
+            answerOne.setVisible(false);
+            nextQuestionBtn.setVisible(false);
+            prevQuestionBtn.setVisible(false);
+        }
     }//GEN-LAST:event_nextQuestionBtnActionPerformed
 
     private void prevQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevQuestionBtnActionPerformed
@@ -717,6 +775,16 @@ private List<Question> loadQuestionsFromFile(String filename) {
             loadQuestion();
         }
     }//GEN-LAST:event_prevQuestionBtnActionPerformed
+
+    private void quizResetBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quizResetBtnActionPerformed
+        // TODO add your handling code here:
+        resetQuiz();
+        
+        answerFour.setVisible(true);
+        answerThree.setVisible(true);
+        answerTwo.setVisible(true);
+        answerOne.setVisible(true);
+    }//GEN-LAST:event_quizResetBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -783,6 +851,7 @@ private List<Question> loadQuestionsFromFile(String filename) {
     private javax.swing.JButton nextQuestionBtn;
     private javax.swing.JButton prevQuestionBtn;
     private javax.swing.JTextArea questionTa;
+    private javax.swing.JButton quizResetBtn;
     private java.awt.TextArea trackerDisplay;
     private java.awt.TextArea welcomeLabel;
     // End of variables declaration//GEN-END:variables
