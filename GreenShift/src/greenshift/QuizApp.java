@@ -9,9 +9,9 @@ import java.util.*;
  * @author aorpr
  */
 public class QuizApp {
-    private List<Question> questions;
+    private List<Question> questions; // list of Question objects
     private int[] userAnswers;
-    private int currentQuestion;
+    private int currentQuestion; //int for index of current question 
 
     public QuizApp(List<Question> questions) {
         this.questions = questions;
