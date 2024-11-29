@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
  * @author bloxd
  */
 public class MainGUI extends javax.swing.JFrame {
+    
     ArrayList <ClimateAction> trackerList;
     int listIndex;
     
@@ -668,7 +669,7 @@ public class MainGUI extends javax.swing.JFrame {
                 listIndex = 0; //if bigger than list, start at the 0 index again!
             }
         }else{
-             trackerDisplay.setText("Nothing in yout todo list!");
+             trackerDisplay.setText("Nothing in yout tracker yet!");
         }
     }//GEN-LAST:event_nextBTNActionPerformed
 

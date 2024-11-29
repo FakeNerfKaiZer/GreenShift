@@ -27,7 +27,7 @@ public class ClimateAction implements Serializable{
     
     @Override
     public String toString() {
-        return "Todo: " + name;
+        return name;
     }
    
 }
