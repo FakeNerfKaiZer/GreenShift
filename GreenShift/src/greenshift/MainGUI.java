@@ -6,13 +6,16 @@ package greenshift;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -34,10 +37,24 @@ public class MainGUI extends javax.swing.JFrame {
      */
     public MainGUI() {        
         initComponents();
-       
-        listIndex = 0;
-        trackerList = new ArrayList<>(); //create the arraylist
+                
+        quizResetBtn.setVisible(false);
         
+        //btn group for quiz answers, helps with bug fixes
+        answerBtnGroup.add(answerOne);
+        answerBtnGroup.add(answerTwo);
+        answerBtnGroup.add(answerThree);
+        answerBtnGroup.add(answerFour);
+        
+        actionList = new ArrayList<>(); //create the arraylist
+        listIndex = 0;
+        
+        List<Question> questions = loadQuestionsFromFile("questions.txt"); //loads questions from txt file
+        quizApp = new QuizApp(questions);
+        loadQuestion(); //
+        
+        loadTracker();
+        displayAll();
         welcomeLabel.setText("Welcome to GreenShift \n" +
                      "Your Personal Climate Impact Tracker\n\n" +
                      "Thank you for joining us on this journey toward a healthier planet!\n" +
@@ -51,7 +68,8 @@ public class MainGUI extends javax.swing.JFrame {
                      "Let’s get started! Pick an app from the navbar to begin");
     }
 
-    private void loadList(){  //a method to just read in and load list into the ArrayList
+    ////////////////////Sean's section - Tracker things/////////////////////////////////////////////
+    private void loadTracker(){  //a method to just read in and load list into the ArrayList
 
     File f;
     FileInputStream fStream;
@@ -70,7 +88,7 @@ public class MainGUI extends javax.swing.JFrame {
     }
     }
     
-    private void saveList(){//a method to just save the ArrayList to file
+    private void saveTracker(){//a method to just save the ArrayList to file
         File f;
         FileOutputStream fStream;
         ObjectOutputStream oStream;
@@ -101,6 +119,99 @@ public class MainGUI extends javax.swing.JFrame {
             } 
         }        
     }
+    
+    ////////////////////Andrei section - quiz things/////////////////////////////////////////////
+    private void loadQuestion() {
+    Question currentQuestion = quizApp.getCurrentQuestion();
+    questionTa.setText(currentQuestion.getQuestionText());
+    String[] options = currentQuestion.getAnswers();
+    answerOne.setText(options[0]);
+    answerTwo.setText(options[1]);
+    answerThree.setText(options[2]);
+    answerFour.setText(options[3]);
+    
+    // Clears previous answer seleciton when loading a new question
+    answerBtnGroup.clearSelection();    
+
+    // Restore previous selection
+    int selectedAnswer = quizApp.getUserAnswer();
+    if (selectedAnswer != -1) {
+        switch (selectedAnswer) {
+            case 0 -> answerOne.setSelected(true);
+            case 1 -> answerTwo.setSelected(true);
+            case 2 -> answerThree.setSelected(true);
+            case 3 -> answerFour.setSelected(true);
+        }
+    }
+}
+
+private void saveAnswer() {
+    if (answerOne.isSelected()) {
+        quizApp.setUserAnswer(0);
+    } else if (answerTwo.isSelected()) {
+        quizApp.setUserAnswer(1);
+    } else if (answerThree.isSelected()) {
+        quizApp.setUserAnswer(2);
+    } else if (answerFour.isSelected()) {
+        quizApp.setUserAnswer(3);
+    }
+}
+
+
+    
+private List<Question> loadQuestionsFromFile(String filename) {
+    List<Question> questions = new ArrayList<>();
+    try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            // Read the question text
+            String questionText = line;
+
+            // Read the 4 answer options
+            String[] answers = new String[4];
+            for (int i = 0; i < 4; i++) {
+                answers[i] = reader.readLine();
+            }
+
+            // Read the correct answer index
+            int correctAnswer = Integer.parseInt(reader.readLine());
+
+            // Create and add the question object
+            questions.add(new Question(questionText, answers, correctAnswer));
+
+            // Skip blank line (if present)
+            reader.readLine();
+        }
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Error loading questions: " + e.getMessage());
+    }
+    return questions;
+}
+
+private void resetQuiz() {
+    // Clear user answers
+    for (int i = 0; i < quizApp.getTotalQuestions(); i++) {
+        quizApp.setUserAnswer(-1);
+    }
+
+    // Reset to the first question
+    quizApp.previousQuestion(); // Ensure it navigates to the start
+    while (quizApp.hasPreviousQuestion()) {
+        quizApp.previousQuestion();
+    }
+
+    // Reload the first question
+    loadQuestion();
+
+    // Reset UI components
+    answerBtnGroup.clearSelection();
+    quizResetBtn.setVisible(false); // Hide reset button
+    nextQuestionBtn.setVisible(true); // Show navigation buttons
+    prevQuestionBtn.setVisible(true);
+}
+
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -640,7 +751,7 @@ public class MainGUI extends javax.swing.JFrame {
             temp = trackerList.get(i);
             if(searchTerm.equalsIgnoreCase(temp.getName())){
                 trackerList.remove(i); //delete it
-                saveList(); //save list again
+                saveTracker(); //save list again
             }
         }
          trackerDisplay.append("\nDeleted from list!");
@@ -653,7 +764,7 @@ public class MainGUI extends javax.swing.JFrame {
         temp = new ClimateAction(name);
         
         trackerList.add(temp);
-        saveList();  //call my save method aove
+        saveTracker();  //call my save method aove
          trackerDisplay.append("\nSaved to list!");
     }//GEN-LAST:event_addBTN1ActionPerformed
 
@@ -774,6 +885,56 @@ public class MainGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_answerOne3ActionPerformed
 
+    private void nextQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextQuestionBtnActionPerformed
+
+        saveAnswer();
+
+        // Clear all radio button selections before moving to next question
+        answerBtnGroup.clearSelection();    
+
+        // Check if it's the final question
+        if (quizApp.hasNextQuestion()) {
+            quizApp.nextQuestion();
+            loadQuestion();
+        }
+        else {
+            // End of the quiz: display the score
+            int score = quizApp.calculateScore();
+            questionTa.setText("Quiz Completed!\nYour score: " + score + "/" + quizApp.getTotalQuestions());
+
+            // Show the reset button
+            quizResetBtn.setVisible(true);
+
+            // Hide next/prev buttons and answers
+            selectAnswerlbl.setVisible(false);
+            answerFour.setVisible(false);
+            answerThree.setVisible(false);
+            answerTwo.setVisible(false);
+            answerOne.setVisible(false);
+            nextQuestionBtn.setVisible(false);
+            prevQuestionBtn.setVisible(false);
+        }
+    }//GEN-LAST:event_nextQuestionBtnActionPerformed
+
+    private void prevQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevQuestionBtnActionPerformed
+        // TODO add your handling code here:
+    saveAnswer();
+        if (quizApp.hasPreviousQuestion()) {
+            quizApp.previousQuestion();
+            loadQuestion();
+        }
+    }//GEN-LAST:event_prevQuestionBtnActionPerformed
+
+    private void quizResetBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quizResetBtnActionPerformed
+        // TODO add your handling code here:
+        resetQuiz();
+
+        selectAnswerlbl.setVisible(true);
+        answerFour.setVisible(true);
+        answerThree.setVisible(true);
+        answerTwo.setVisible(true);
+        answerOne.setVisible(true);
+    }//GEN-LAST:event_quizResetBtnActionPerformed
     /**
      * @param args the command line arguments
      */
