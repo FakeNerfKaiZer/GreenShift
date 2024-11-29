@@ -254,9 +254,9 @@ private void resetQuiz() {
         quizResetBtn = new javax.swing.JButton();
         selectAnswerlbl = new javax.swing.JLabel();
         TrackerPanel = new javax.swing.JPanel();
-        deleteBTN = new javax.swing.JToggleButton();
-        addBTN1 = new javax.swing.JToggleButton();
-        nextBTN = new javax.swing.JButton();
+        deleteBTNtracker = new javax.swing.JToggleButton();
+        addBTNtracker = new javax.swing.JToggleButton();
+        nextBTNtracker = new javax.swing.JButton();
         trackerDisplay = new java.awt.TextArea();
         actionInput = new javax.swing.JTextField();
         label1 = new java.awt.Label();
@@ -638,26 +638,26 @@ private void resetQuiz() {
 
         TrackerPanel.setBackground(new java.awt.Color(1, 148, 141));
 
-        deleteBTN.setText("Delete");
-        deleteBTN.setBorder(null);
-        deleteBTN.addActionListener(new java.awt.event.ActionListener() {
+        deleteBTNtracker.setText("Delete");
+        deleteBTNtracker.setBorder(null);
+        deleteBTNtracker.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteBTNActionPerformed(evt);
+                deleteBTNtrackerActionPerformed(evt);
             }
         });
 
-        addBTN1.setText("Add");
-        addBTN1.setBorder(null);
-        addBTN1.addActionListener(new java.awt.event.ActionListener() {
+        addBTNtracker.setText("Add");
+        addBTNtracker.setBorder(null);
+        addBTNtracker.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addBTN1ActionPerformed(evt);
+                addBTNtrackerActionPerformed(evt);
             }
         });
 
-        nextBTN.setText("Next");
-        nextBTN.addActionListener(new java.awt.event.ActionListener() {
+        nextBTNtracker.setText("Next");
+        nextBTNtracker.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextBTNActionPerformed(evt);
+                nextBTNtrackerActionPerformed(evt);
             }
         });
 
@@ -679,9 +679,9 @@ private void resetQuiz() {
             TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TrackerPanelLayout.createSequentialGroup()
                 .addGap(88, 88, 88)
-                .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(addBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(deleteBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(82, 82, 82))
             .addGroup(TrackerPanelLayout.createSequentialGroup()
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -689,7 +689,7 @@ private void resetQuiz() {
                         .addGap(34, 34, 34)
                         .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(TrackerPanelLayout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -709,15 +709,15 @@ private void resetQuiz() {
                 .addGap(22, 22, 22)
                 .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(59, 59, 59)
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(actionInput, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29))
         );
 
@@ -742,8 +742,9 @@ private void resetQuiz() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void deleteBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBTNActionPerformed
-        // TODO add your handling code here:
+    private void deleteBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBTNtrackerActionPerformed
+        //Tracker's Delete Button
+        
         //search for an item
         ClimateAction temp;
         String searchTerm = JOptionPane.showInputDialog(null, "Enter task name to delete");
@@ -755,10 +756,11 @@ private void resetQuiz() {
             }
         }
          trackerDisplay.append("\nDeleted from list!");
-    }//GEN-LAST:event_deleteBTNActionPerformed
+    }//GEN-LAST:event_deleteBTNtrackerActionPerformed
 
-    private void addBTN1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBTN1ActionPerformed
-        // TODO add your handling code here:
+    private void addBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBTNtrackerActionPerformed
+        //Tracker's Add Button
+        
         ClimateAction temp;  //temp obj
         String name = actionInput.getText();
         temp = new ClimateAction(name);
@@ -766,10 +768,10 @@ private void resetQuiz() {
         trackerList.add(temp);
         saveTracker();  //call my save method aove
          trackerDisplay.append("\nSaved to list!");
-    }//GEN-LAST:event_addBTN1ActionPerformed
+    }//GEN-LAST:event_addBTNtrackerActionPerformed
 
-    private void nextBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBTNActionPerformed
-        // TODO add your handling code here:
+    private void nextBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBTNtrackerActionPerformed
+        //Tracker's Next Button
         
         if(!trackerList.isEmpty()){
             ClimateAction temp = trackerList.get(listIndex);
@@ -782,7 +784,7 @@ private void resetQuiz() {
         }else{
              trackerDisplay.setText("Nothing in yout tracker yet!");
         }
-    }//GEN-LAST:event_nextBTNActionPerformed
+    }//GEN-LAST:event_nextBTNtrackerActionPerformed
 
     private void answerOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerOneActionPerformed
         // TODO add your handling code here:
@@ -979,7 +981,7 @@ private void resetQuiz() {
     private javax.swing.JPanel TrackerPanel;
     private javax.swing.JPanel WelcomePanel;
     private javax.swing.JTextField actionInput;
-    private javax.swing.JToggleButton addBTN1;
+    private javax.swing.JToggleButton addBTNtracker;
     private javax.swing.ButtonGroup answerBtnGroup;
     private javax.swing.JRadioButton answerFour;
     private javax.swing.JRadioButton answerOne;
@@ -988,7 +990,7 @@ private void resetQuiz() {
     private javax.swing.JRadioButton answerOne3;
     private javax.swing.JRadioButton answerThree;
     private javax.swing.JRadioButton answerTwo;
-    private javax.swing.JToggleButton deleteBTN;
+    private javax.swing.JToggleButton deleteBTNtracker;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1001,7 +1003,7 @@ private void resetQuiz() {
     private javax.swing.JButton navQuizBtn;
     private javax.swing.JButton navTipBtn;
     private javax.swing.JButton navTrackerBtn;
-    private javax.swing.JButton nextBTN;
+    private javax.swing.JButton nextBTNtracker;
     private javax.swing.JButton nextQuestionBtn;
     private javax.swing.JButton nextQuestionBtn1;
     private javax.swing.JButton prevQuestionBtn;

@@ -731,9 +731,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="88" max="-2" attributes="0"/>
-                      <Component id="addBTN1" min="-2" pref="119" max="-2" attributes="0"/>
+                      <Component id="addBTNtracker" min="-2" pref="119" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="deleteBTN" min="-2" pref="119" max="-2" attributes="0"/>
+                      <Component id="deleteBTNtracker" min="-2" pref="119" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
@@ -742,7 +742,7 @@
                               <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="trackerDisplay" min="-2" pref="606" max="-2" attributes="0"/>
-                                  <Component id="nextBTN" min="-2" pref="108" max="-2" attributes="0"/>
+                                  <Component id="nextBTNtracker" min="-2" pref="108" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -769,7 +769,7 @@
                       <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                       <Component id="trackerDisplay" min="-2" pref="289" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="nextBTN" min="-2" pref="33" max="-2" attributes="0"/>
+                      <Component id="nextBTNtracker" min="-2" pref="33" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="label1" min="-2" pref="41" max="-2" attributes="0"/>
@@ -777,8 +777,8 @@
                       </Group>
                       <EmptySpace pref="66" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="addBTN1" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                          <Component id="deleteBTN" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                          <Component id="addBTNtracker" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                          <Component id="deleteBTNtracker" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                   </Group>
@@ -786,7 +786,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JToggleButton" name="deleteBTN">
+            <Component class="javax.swing.JToggleButton" name="deleteBTNtracker">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Delete"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -794,10 +794,10 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteBTNActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteBTNtrackerActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JToggleButton" name="addBTN1">
+            <Component class="javax.swing.JToggleButton" name="addBTNtracker">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Add"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -805,15 +805,15 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addBTN1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addBTNtrackerActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="nextBTN">
+            <Component class="javax.swing.JButton" name="nextBTNtracker">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Next"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nextBTNActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nextBTNtrackerActionPerformed"/>
               </Events>
             </Component>
             <Component class="java.awt.TextArea" name="trackerDisplay">
