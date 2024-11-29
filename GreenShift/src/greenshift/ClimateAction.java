@@ -4,53 +4,30 @@
  */
 package greenshift;
 
+import java.io.Serializable;
+
 /**
  *
  * @author bloxd
  */
-public class ClimateAction {
-    String name, content;
-    boolean done;
+public class ClimateAction implements Serializable{
+    
+    String name;
 
-    public ClimateAction(String name) {
+    public ClimateAction(String name){
         this.name = name;
     }
 
     public ClimateAction() {
     }
-
+    
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /*public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public boolean isDone() {
-        return done;
-    }
-
-    public void setDone(boolean done) {
-        this.done = done;
-    }
-
-    @Override
-    public String toString() {
-        return "Todo: " + name + ", content: " + content + ", done: " + done ;
-    }*/
     
     @Override
     public String toString() {
         return name;
     }
-    
+   
 }
