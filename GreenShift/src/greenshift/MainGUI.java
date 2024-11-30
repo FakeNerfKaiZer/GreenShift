@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
  */
 public class MainGUI extends javax.swing.JFrame {
     
+    private QuizApp quizApp;
     ArrayList <ClimateAction> trackerList;
     int listIndex;
     
