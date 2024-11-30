@@ -24,6 +24,7 @@ public class QuizApp {
         return questions.get(currentQuestion);
     }
 
+    
     public void setUserAnswer(int answerIndex) {
         userAnswers[currentQuestion] = answerIndex;
     }
@@ -40,18 +41,21 @@ public class QuizApp {
         return currentQuestion > 0;
     }
 
+    //next q if there even is a next q 
     public void nextQuestion() {
         if (hasNextQuestion()) {
             currentQuestion++;
         }
     }
 
+    //if has prev q, then -- to go prev
     public void previousQuestion() {
         if (hasPreviousQuestion()) {
             currentQuestion--;
         }
     }
 
+    //for each question user gets correct out of i questions, score up. 
     public int calculateScore() {
         int score = 0;
         for (int i = 0; i < questions.size(); i++) {

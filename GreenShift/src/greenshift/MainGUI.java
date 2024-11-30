@@ -146,6 +146,7 @@ public class MainGUI extends javax.swing.JFrame {
     }
 }
 
+    //simple save answer method
 private void saveAnswer() {
     if (answerOne.isSelected()) {
         quizApp.setUserAnswer(0);
@@ -159,7 +160,7 @@ private void saveAnswer() {
 }
 
 
-    
+    //load questions from Questions.txt 
 private List<Question> loadQuestionsFromFile(String filename) {
     List<Question> questions = new ArrayList<>();
     try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
@@ -888,6 +889,7 @@ private void resetQuiz() {
         // TODO add your handling code here:
     }//GEN-LAST:event_answerOne3ActionPerformed
 
+    ////////QUIZZ NEXT/PREV/RESET BUTTONS///////////////
     private void nextQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextQuestionBtnActionPerformed
 
         saveAnswer();
