@@ -27,7 +27,7 @@ public class MainGUI extends javax.swing.JFrame {
     ArrayList <ClimateAction> trackerList;
     int listIndex;
     
-    
+    //Displays the welcome page on launch
     public void showWelcomePanel() {
     CardLayout cardLayout = (CardLayout) Background.getLayout();
     cardLayout.show(Background, "WelcomePanel"); // Use the name assigned to WelcomePanel
@@ -46,7 +46,7 @@ public class MainGUI extends javax.swing.JFrame {
         answerBtnGroup.add(answerThree);
         answerBtnGroup.add(answerFour);
         
-        actionList = new ArrayList<>(); //create the arraylist
+        trackerList = new ArrayList<>(); //create the arraylist
         listIndex = 0;
         
         List<Question> questions = loadQuestionsFromFile("questions.txt"); //loads questions from txt file
@@ -54,7 +54,7 @@ public class MainGUI extends javax.swing.JFrame {
         loadQuestion(); //
         
         loadTracker();
-        displayAll();
+        displayAllTracker();
         welcomeLabel.setText("Welcome to GreenShift \n" +
                      "Your Personal Climate Impact Tracker\n\n" +
                      "Thank you for joining us on this journey toward a healthier planet!\n" +
@@ -107,12 +107,12 @@ public class MainGUI extends javax.swing.JFrame {
         }
     }
     
-    private void displayAll(){ //method to display all 
-        trackerDisplay.setText(""); //clear the displayTA
+    private void displayAllTracker(){
+        trackerDisplay.setText(""); //clear the display
         if(trackerList.isEmpty()){
             trackerDisplay.setText("Nothing in yout tracker yet!");
         }else{
-            ClimateAction temp; //create a temp obj to store items from the arraylist
+            ClimateAction temp; //temp to store objects into the list
             for(int i = 0; i < trackerList.size(); i++){
                 temp = trackerList.get(i);
                 trackerDisplay.append(temp.toString()+"\n");
@@ -761,12 +761,12 @@ private void resetQuiz() {
     private void addBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBTNtrackerActionPerformed
         //Tracker's Add Button
         
-        ClimateAction temp;  //temp obj
+        ClimateAction temp;  //temp obj for neatness
         String name = actionInput.getText();
         temp = new ClimateAction(name);
         
         trackerList.add(temp);
-        saveTracker();  //call my save method aove
+        saveTracker();  //save the list to a file
          trackerDisplay.append("\nSaved to list!");
     }//GEN-LAST:event_addBTNtrackerActionPerformed
 
@@ -775,11 +775,11 @@ private void resetQuiz() {
         
         if(!trackerList.isEmpty()){
             ClimateAction temp = trackerList.get(listIndex);
-            trackerDisplay.setText(temp.toString());            
-            listIndex++; //increase to move to next item in todo list
-            ///*** danger need to check we haven't gone over the size of the list!
+            trackerDisplay.setText(temp.toString()); //display the data            
+            listIndex++; //increase to move to next item in the list
+            //So we don't go over the size limit
             if(listIndex >= trackerList.size()){ 
-                listIndex = 0; //if bigger than list, start at the 0 index again!
+                listIndex = 0; //if index is bigger than the list, start over
             }
         }else{
              trackerDisplay.setText("Nothing in yout tracker yet!");
