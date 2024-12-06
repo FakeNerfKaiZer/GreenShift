@@ -263,6 +263,7 @@ private void resetQuiz() {
         actionInput = new javax.swing.JTextField();
         label1 = new java.awt.Label();
         label2 = new java.awt.Label();
+        updateStatusBTNtracker = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
@@ -663,7 +664,7 @@ private void resetQuiz() {
             }
         });
 
-        actionInput.setText("jTextField1");
+        actionInput.setToolTipText("");
 
         label1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         label1.setForeground(new java.awt.Color(242, 242, 242));
@@ -674,6 +675,13 @@ private void resetQuiz() {
         label2.setForeground(new java.awt.Color(255, 255, 255));
         label2.setName(""); // NOI18N
         label2.setText("Action Tracker");
+
+        updateStatusBTNtracker.setText("Update Status");
+        updateStatusBTNtracker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateStatusBTNtrackerActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout TrackerPanelLayout = new javax.swing.GroupLayout(TrackerPanel);
         TrackerPanel.setLayout(TrackerPanelLayout);
@@ -689,9 +697,12 @@ private void resetQuiz() {
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(TrackerPanelLayout.createSequentialGroup()
                         .addGap(34, 34, 34)
-                        .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(TrackerPanelLayout.createSequentialGroup()
+                                .addComponent(updateStatusBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(TrackerPanelLayout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -711,7 +722,9 @@ private void resetQuiz() {
                 .addGap(22, 22, 22)
                 .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(updateStatusBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(59, 59, 59)
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -745,46 +758,64 @@ private void resetQuiz() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void deleteBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBTNtrackerActionPerformed
-        //Tracker's Delete Button
-        
-        //search for an item
-        ClimateAction temp;
+        // Tracker's Delete Button
+
         String searchTerm = JOptionPane.showInputDialog(null, "Enter task name to delete");
-        for(int i = 0; i < trackerList.size(); i++){
-            temp = trackerList.get(i);
-            if(searchTerm.equalsIgnoreCase(temp.getName())){
-                trackerList.remove(i); //delete it
-                saveTracker(); //save list again
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            for (int i = 0; i < trackerList.size(); i++) {
+                ClimateAction temp = trackerList.get(i);
+                if (searchTerm.equalsIgnoreCase(temp.getName())) {
+                    trackerList.remove(i); // Delete the action
+                    saveTracker(); // Save the updated list
+                    trackerDisplay.append("\nDeleted: " + temp.getName());
+                    return;
+                }
             }
+            trackerDisplay.append("\nNo matching task found.");
+        } else {
+            trackerDisplay.append("\nPlease enter a valid task name.");
         }
-         trackerDisplay.append("\nDeleted from list!");
     }//GEN-LAST:event_deleteBTNtrackerActionPerformed
 
     private void addBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBTNtrackerActionPerformed
-        //Tracker's Add Button
+        // Tracker's Add Button
+
+        ClimateAction temp;  // Temporary object for neatness
+        String name = actionInput.getText();  // Get action name from user input
         
-        ClimateAction temp;  //temp obj for neatness
-        String name = actionInput.getText();
-        temp = new ClimateAction(name);
+        // Optionally, prompt the user for action type and initial status
+        String actionType = JOptionPane.showInputDialog("Enter action type (e.g., Recycling, Energy Saving):");
+        String status = "Pending";  // Default status
         
-        trackerList.add(temp);
-        saveTracker();  //save the list to a file
-         trackerDisplay.append("\nSaved to list!");
+        // Create action based on type
+        if (actionType.equalsIgnoreCase("Recycling")) {
+            temp = new RecyclingAction(name);  // Create a RecyclingAction object
+        } else if (actionType.equalsIgnoreCase("Energy Saving")) {
+            temp = new EnergySavingAction(name);  // Create an EnergySavingAction object
+        } else {
+            temp = new ClimateAction(name, status);  // Default ClimateAction if unknown type
+        }
+        
+        trackerList.add(temp);  // Add to the tracker list
+        saveTracker();  // Save list to the file
+        
+        trackerDisplay.append("\n" + name + " added with status: " + status);
     }//GEN-LAST:event_addBTNtrackerActionPerformed
 
     private void nextBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBTNtrackerActionPerformed
-        //Tracker's Next Button
+        // Tracker's Next Button
         
-        if(!trackerList.isEmpty()){
-            ClimateAction temp = trackerList.get(listIndex);
-            trackerDisplay.setText(temp.toString()); //display the data            
-            listIndex++; //increase to move to next item in the list
-            //So we don't go over the size limit
-            if(listIndex >= trackerList.size()){ 
-                listIndex = 0; //if index is bigger than the list, start over
+        if (!trackerList.isEmpty()) {
+            ClimateAction temp = trackerList.get(listIndex);  // Get current action
+            trackerDisplay.setText(temp.getActionType() + ": " + temp.getName() + " - Status: " + temp.getStatus());  // Display action info with status
+            listIndex++;  // Move to the next action
+            
+            // Ensure we don't go past the end of the list
+            if (listIndex >= trackerList.size()) {
+                listIndex = 0;  // Start over when reaching the end
             }
-        }else{
-             trackerDisplay.setText("Nothing in yout tracker yet!");
+        } else {
+            trackerDisplay.setText("No actions in your tracker yet!");
         }
     }//GEN-LAST:event_nextBTNtrackerActionPerformed
 
@@ -940,6 +971,24 @@ private void resetQuiz() {
         answerTwo.setVisible(true);
         answerOne.setVisible(true);
     }//GEN-LAST:event_quizResetBtnActionPerformed
+
+    private void updateStatusBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStatusBTNtrackerActionPerformed
+        //Update Status of a Climate Action
+        
+        String searchTerm = JOptionPane.showInputDialog(null, "Enter task name to update status:");
+        String newStatus = JOptionPane.showInputDialog("Enter new status (e.g., Completed, In Progress):");
+        
+        for (int i = 0; i < trackerList.size(); i++) {
+            ClimateAction temp = trackerList.get(i);
+            if (searchTerm.equalsIgnoreCase(temp.getName())) {
+                temp.setStatus(newStatus);  // Update the status of the action
+                saveTracker();  // Save the list again
+                trackerDisplay.append("\nStatus of " + searchTerm + " updated to: " + newStatus);
+                return;
+            }
+        }
+        trackerDisplay.append("\nTask not found.");
+    }//GEN-LAST:event_updateStatusBTNtrackerActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -1016,6 +1065,7 @@ private void resetQuiz() {
     private javax.swing.JButton quizResetBtn;
     private javax.swing.JLabel selectAnswerlbl;
     private java.awt.TextArea trackerDisplay;
+    private javax.swing.JButton updateStatusBTNtracker;
     private java.awt.TextArea welcomeLabel;
     // End of variables declaration//GEN-END:variables
 }
