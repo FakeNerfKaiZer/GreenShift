@@ -7,12 +7,23 @@ package greenshift;
 import java.awt.CardLayout;
 import java.awt.Color;
 import javax.swing.JOptionPane;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 /**
  *
  * @author bloxd
  */
 public class MainGUI extends javax.swing.JFrame {
+    ArrayList <EnergyTips> energytips; 
+    ArrayList <TransportTips> transporttips;
+    ArrayList <RecycleTips> recycletips;
+    int currentIndex;
     
     public void showWelcomePanel() {
     CardLayout cardLayout = (CardLayout) Background.getLayout();
@@ -23,6 +34,14 @@ public class MainGUI extends javax.swing.JFrame {
      */
     public MainGUI() {        
         initComponents();
+        energytips = new ArrayList<>(); //create the arraylists
+        transporttips = new ArrayList<>();
+        recycletips = new ArrayList<>();
+        
+        currentIndex = 0; 
+        loadEnergyList();
+        loadTransportList();
+        loadRecycleList();
        
         welcomeLabel.setText("Welcome to GreenShift \n" +
                      "Your Personal Climate Impact Tracker\n\n" +
@@ -65,12 +84,15 @@ public class MainGUI extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tipTa1 = new javax.swing.JTextArea();
-        prevQuestionBtn1 = new javax.swing.JButton();
-        nextQuestionBtn1 = new javax.swing.JButton();
+        addBtn1 = new javax.swing.JButton();
+        nextTipBtn1 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         energyButton = new javax.swing.JRadioButton();
         transportButton = new javax.swing.JRadioButton();
-        recyclingButton = new javax.swing.JRadioButton();
+        recycleButton = new javax.swing.JRadioButton();
+        AddTipTF = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        prevTipBtn2 = new javax.swing.JButton();
         QuizPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         questionTa = new javax.swing.JTextArea();
@@ -222,27 +244,65 @@ public class MainGUI extends javax.swing.JFrame {
         tipTa1.setBackground(new java.awt.Color(255, 255, 255));
         tipTa1.setColumns(20);
         tipTa1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        tipTa1.setLineWrap(true);
         tipTa1.setRows(5);
         tipTa1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jScrollPane2.setViewportView(tipTa1);
 
-        prevQuestionBtn1.setText("Previous");
-        prevQuestionBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        addBtn1.setText("Add");
+        addBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        addBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addBtn1ActionPerformed(evt);
+            }
+        });
 
-        nextQuestionBtn1.setText("Next");
-        nextQuestionBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        nextTipBtn1.setText("Next");
+        nextTipBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        nextTipBtn1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextTipBtn1ActionPerformed(evt);
+            }
+        });
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Please select which category of tips you would like to receive: ");
 
         tipButtonGroup1.add(energyButton);
         energyButton.setText("Energy");
+        energyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                energyButtonActionPerformed(evt);
+            }
+        });
 
         tipButtonGroup1.add(transportButton);
         transportButton.setText("Transportation");
+        transportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                transportButtonActionPerformed(evt);
+            }
+        });
 
-        tipButtonGroup1.add(recyclingButton);
-        recyclingButton.setText("Recycling");
+        tipButtonGroup1.add(recycleButton);
+        recycleButton.setText("Recycling");
+        recycleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                recycleButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("You may enter any other suitable tips:");
+
+        prevTipBtn2.setText("Previous");
+        prevTipBtn2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        prevTipBtn2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prevTipBtn2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout TipPanelLayout = new javax.swing.GroupLayout(TipPanel);
         TipPanel.setLayout(TipPanelLayout);
@@ -251,34 +311,40 @@ public class MainGUI extends javax.swing.JFrame {
             .addGroup(TipPanelLayout.createSequentialGroup()
                 .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(TipPanelLayout.createSequentialGroup()
-                        .addGap(128, 128, 128)
-                        .addComponent(prevQuestionBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(nextQuestionBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(79, 79, 79))
+                        .addGap(161, 161, 161)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(TipPanelLayout.createSequentialGroup()
-                        .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(TipPanelLayout.createSequentialGroup()
-                                .addGap(161, 161, 161)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(TipPanelLayout.createSequentialGroup()
-                                .addGap(42, 42, 42)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(42, 42, 42)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(39, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
-                .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(TipPanelLayout.createSequentialGroup()
-                        .addGap(100, 100, 100)
-                        .addComponent(energyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(81, 81, 81)
-                        .addComponent(transportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(recyclingButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(TipPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(126, 126, 126))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
+                            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(TipPanelLayout.createSequentialGroup()
+                                    .addComponent(energyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(68, 68, 68)
+                                    .addComponent(transportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(89, 89, 89)
+                                    .addComponent(recycleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(126, 126, 126))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(AddTipTF, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(43, 43, 43))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
+                            .addComponent(nextTipBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(214, 214, 214)))))
+            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(TipPanelLayout.createSequentialGroup()
+                    .addGap(165, 165, 165)
+                    .addComponent(prevTipBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(389, Short.MAX_VALUE)))
         );
         TipPanelLayout.setVerticalGroup(
             TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -289,16 +355,25 @@ public class MainGUI extends javax.swing.JFrame {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44)
                 .addComponent(jLabel3)
-                .addGap(60, 60, 60)
+                .addGap(27, 27, 27)
                 .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(energyButton)
                     .addComponent(transportButton)
-                    .addComponent(recyclingButton))
-                .addGap(79, 79, 79)
+                    .addComponent(recycleButton))
+                .addGap(28, 28, 28)
+                .addComponent(nextTipBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
                 .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(prevQuestionBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nextQuestionBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(117, 117, 117))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(AddTipTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(121, Short.MAX_VALUE))
+            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
+                    .addContainerGap(415, Short.MAX_VALUE)
+                    .addComponent(prevTipBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(220, 220, 220)))
         );
 
         Background.add(TipPanel, "card2");
@@ -498,6 +573,118 @@ public class MainGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void loadEnergyList(){  //Methods to just read in and load list into the ArrayLists
+       
+        File f;
+        FileInputStream fStream;
+        ObjectInputStream oStream;
+        try{
+            f = new File("EnergyOutput.dat");
+            fStream = new FileInputStream(f); 
+            oStream = new ObjectInputStream(fStream);
+            
+            energytips = (ArrayList<EnergyTips>)oStream.readObject();
+            
+            oStream.close();
+        }
+        catch(IOException |ClassNotFoundException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void loadTransportList(){
+       
+        File f;
+        FileInputStream fStream;
+        ObjectInputStream oStream;
+        try{
+            f = new File("TransportOutput.dat");
+            fStream = new FileInputStream(f); 
+            oStream = new ObjectInputStream(fStream);
+            
+            transporttips = (ArrayList<TransportTips>)oStream.readObject();
+            
+            oStream.close();
+        }
+        catch(IOException |ClassNotFoundException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void loadRecycleList(){
+       
+        File f;
+        FileInputStream fStream;
+        ObjectInputStream oStream;
+        try{
+            f = new File("RecycleOutput.dat");
+            fStream = new FileInputStream(f); 
+            oStream = new ObjectInputStream(fStream);
+            
+            recycletips = (ArrayList<RecycleTips>)oStream.readObject();
+            
+            oStream.close();
+        }
+        catch(IOException |ClassNotFoundException e){
+            System.out.println(e);
+        }
+    }
+    private void saveEnergyList(){
+        File f;
+        FileOutputStream fStream;
+        ObjectOutputStream oStream;
+        
+        try{
+            f = new File("EnergyOutput.dat");
+            fStream = new FileOutputStream(f);
+            oStream = new ObjectOutputStream(fStream);
+            
+            oStream.writeObject(energytips);
+            oStream.close();
+             tipTa1.append("\nTip Added");
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void saveTransportList(){
+        File f;
+        FileOutputStream fStream;
+        ObjectOutputStream oStream;
+        
+        try{
+            f = new File("TransportOutput.dat");
+            fStream = new FileOutputStream(f);
+            oStream = new ObjectOutputStream(fStream);
+            
+            oStream.writeObject(transporttips);
+            oStream.close();
+             tipTa1.append("\nTip Added");
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void saveRecycleList(){//Methods to just save the ArrayList to files
+        File f;
+        FileOutputStream fStream;
+        ObjectOutputStream oStream;
+        
+        try{
+            f = new File("RecycleOutput.dat");
+            fStream = new FileOutputStream(f);
+            oStream = new ObjectOutputStream(fStream);
+            
+            oStream.writeObject(recycletips);
+            oStream.close();
+             tipTa1.append("\nTip Added");
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+    }
     private void deleteBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBTNActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_deleteBTNActionPerformed
@@ -512,6 +699,7 @@ public class MainGUI extends javax.swing.JFrame {
 
     private void answerOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerOneActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_answerOneActionPerformed
 
     private void navExitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navExitBtnActionPerformed
@@ -599,6 +787,167 @@ public class MainGUI extends javax.swing.JFrame {
         navQuizBtn.setForeground(new Color(255, 255, 255));
     }//GEN-LAST:event_navTrackerBtnActionPerformed
 
+    private void addBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtn1ActionPerformed
+
+        if(energyButton.isSelected()){
+            EnergyTips temp;
+            String tipEnergy = AddTipTF.getText();
+            temp = new EnergyTips(tipEnergy);
+
+            energytips.add(temp);
+            saveEnergyList();
+        }else if(transportButton.isSelected()){
+            TransportTips temp;  //temp obj
+            String tipTransport = AddTipTF.getText();
+            temp = new TransportTips(tipTransport);
+
+            transporttips.add(temp);
+            saveTransportList();
+        }else if(recycleButton.isSelected()){
+            RecycleTips temp; 
+            String tipRecycle = AddTipTF.getText();
+            temp = new RecycleTips(tipRecycle);
+
+            recycletips.add(temp);
+            saveRecycleList();
+        }
+    }//GEN-LAST:event_addBtn1ActionPerformed
+
+    private void nextTipBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextTipBtn1ActionPerformed
+  
+        if(energyButton.isSelected()){
+            if(!energytips.isEmpty()){
+                EnergyTips temp = energytips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+                
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        } else if(transportButton.isSelected()){
+            if(!transporttips.isEmpty()){
+                TransportTips temp = transporttips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+              
+                if(currentIndex >= transporttips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        }else if(recycleButton.isSelected()){
+            if(!recycletips.isEmpty()){
+                RecycleTips temp = recycletips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+              
+                if(currentIndex >= recycletips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        }
+    }//GEN-LAST:event_nextTipBtn1ActionPerformed
+
+    private void energyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_energyButtonActionPerformed
+    
+        tipTa1.setText("");
+            if(!energytips.isEmpty()){
+                EnergyTips temp = energytips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+                
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+    }//GEN-LAST:event_energyButtonActionPerformed
+
+    private void prevTipBtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevTipBtn2ActionPerformed
+       
+        if(energyButton.isSelected()){
+            if(!energytips.isEmpty()){
+                EnergyTips temp = energytips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex--; 
+              
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }else if(currentIndex <= energytips.size()){
+                currentIndex = 0;
+            }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        } else if(transportButton.isSelected()){
+            if(!transporttips.isEmpty()){
+                TransportTips temp = transporttips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex--;
+              
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }else if(currentIndex <= energytips.size()){
+                currentIndex = 0;
+            }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        } else if(recycleButton.isSelected()){
+            if(!recycletips.isEmpty()){
+                RecycleTips temp = recycletips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex--; 
+              
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }else if(currentIndex <= energytips.size()){
+                currentIndex = 0;
+            }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        }
+    }//GEN-LAST:event_prevTipBtn2ActionPerformed
+
+    private void recycleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recycleButtonActionPerformed
+    
+            if(!recycletips.isEmpty()){
+                RecycleTips temp = recycletips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+             
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+            
+    }//GEN-LAST:event_recycleButtonActionPerformed
+
+    private void transportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transportButtonActionPerformed
+     
+            if(!transporttips.isEmpty()){
+                TransportTips temp = transporttips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++; 
+             
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+    }//GEN-LAST:event_transportButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -636,6 +985,7 @@ public class MainGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField AddTipTF;
     private javax.swing.JPanel Background;
     private javax.swing.JPanel Navbar;
     private javax.swing.JPanel QuizPanel;
@@ -643,6 +993,7 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JPanel TrackerPanel;
     private javax.swing.JPanel WelcomePanel;
     private javax.swing.JToggleButton addBTN1;
+    private javax.swing.JButton addBtn1;
     private javax.swing.JRadioButton answerFour;
     private javax.swing.JRadioButton answerOne;
     private javax.swing.JRadioButton answerThree;
@@ -652,6 +1003,7 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
@@ -664,11 +1016,11 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JButton navTrackerBtn;
     private javax.swing.JButton nextBTN;
     private javax.swing.JButton nextQuestionBtn;
-    private javax.swing.JButton nextQuestionBtn1;
+    private javax.swing.JButton nextTipBtn1;
     private javax.swing.JButton prevQuestionBtn;
-    private javax.swing.JButton prevQuestionBtn1;
+    private javax.swing.JButton prevTipBtn2;
     private javax.swing.JTextArea questionTa;
-    private javax.swing.JRadioButton recyclingButton;
+    private javax.swing.JRadioButton recycleButton;
     private java.awt.TextArea textArea2;
     private javax.swing.ButtonGroup tipButtonGroup1;
     private javax.swing.JTextArea tipTa1;

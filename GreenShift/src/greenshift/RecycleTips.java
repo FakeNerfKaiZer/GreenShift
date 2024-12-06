@@ -8,26 +8,25 @@ import java.io.Serializable;
 
 /**
  *
- * @author bloxd
+ * @author sambo
  */
-public class ClimateAction implements Serializable{
+public class RecycleTips implements Serializable {
     
-    String name;
-
-    public ClimateAction(String name){
-        this.name = name;
+    String tipRecyle;
+    
+    public RecycleTips(String tipRecyle){
+        this.tipRecyle = tipRecyle;
     }
 
-    public ClimateAction() {
+    public RecycleTips() {
     }
-    
-    public String getName() {
-        return name;
+
+    public String get() {
+        return tipRecyle;
     }
     
     @Override
-    public String toString() {
-        return name;
+    public String toString(){
+        return tipRecyle;
     }
-    
 }
