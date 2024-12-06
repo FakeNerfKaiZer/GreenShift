@@ -9,7 +9,7 @@ import java.util.*;
  * @author aorpr
  */
 public class QuizApp {
-    private List<Question> questions; // list of Question objects
+    private List<Question> questions; // List of Question objects
     private int[] userAnswers;
     private int currentQuestion; //int for index of current question 
 
@@ -41,21 +41,21 @@ public class QuizApp {
         return currentQuestion > 0;
     }
 
-    //next q if there even is a next q 
+    //Next q if there even is a next q 
     public void nextQuestion() {
         if (hasNextQuestion()) {
             currentQuestion++;
         }
     }
 
-    //if has prev q, then -- to go prev
+    //If has prev q, then -- to go prev
     public void previousQuestion() {
         if (hasPreviousQuestion()) {
             currentQuestion--;
         }
     }
 
-    //for each question user gets correct out of i questions, score up. 
+    //For each question user gets correct out of i questions, score up. 
     public int calculateScore() {
         int score = 0;
         for (int i = 0; i < questions.size(); i++) {
