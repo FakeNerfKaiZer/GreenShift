@@ -3,29 +3,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package greenshift;
+
 import java.io.Serializable;
 
 /**
  *
  * @author sambo
  */
-public class EnergyTips implements Serializable{
+public class TransportTips implements Serializable {
     
-    String tipEnergy;
+    String tipTransport;
     
-    public EnergyTips(String tipEnergy){
-        this.tipEnergy = tipEnergy;
+    public TransportTips(String tipTransport){
+        this.tipTransport = tipTransport;
     }
 
-    public EnergyTips() {
+    public TransportTips() {
     }
 
     public String get() {
-        return tipEnergy;
+        return tipTransport;
     }
     
     @Override
     public String toString(){
-        return tipEnergy;
+        return tipTransport;
     }
 }

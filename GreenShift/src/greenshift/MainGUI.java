@@ -6,29 +6,25 @@ package greenshift;
 
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.io.BufferedReader;
+import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JOptionPane;
 
 /**
  *
  * @author bloxd
  */
 public class MainGUI extends javax.swing.JFrame {
+    ArrayList <EnergyTips> energytips; 
+    ArrayList <TransportTips> transporttips;
+    ArrayList <RecycleTips> recycletips;
+    int currentIndex;
     
-    private QuizApp quizApp;
-    ArrayList <ClimateAction> trackerList;
-    int listIndex;
-    
-    //Displays the welcome page on launch
     public void showWelcomePanel() {
     CardLayout cardLayout = (CardLayout) Background.getLayout();
     cardLayout.show(Background, "WelcomePanel"); // Use the name assigned to WelcomePanel
@@ -38,24 +34,15 @@ public class MainGUI extends javax.swing.JFrame {
      */
     public MainGUI() {        
         initComponents();
-                
-        quizResetBtn.setVisible(false);
+        energytips = new ArrayList<>(); //create the arraylists
+        transporttips = new ArrayList<>();
+        recycletips = new ArrayList<>();
         
-        //btn group for quiz answers, helps with bug fixes
-        answerBtnGroup.add(answerOne);
-        answerBtnGroup.add(answerTwo);
-        answerBtnGroup.add(answerThree);
-        answerBtnGroup.add(answerFour);
-        
-        trackerList = new ArrayList<>(); //create the arraylist
-        listIndex = 0;
-        
-        List<Question> questions = loadQuestionsFromFile("questions.txt"); //loads questions from txt file
-        quizApp = new QuizApp(questions);
-        loadQuestion(); //
-        
-        loadTracker();
-        displayAllTracker();
+        currentIndex = 0; 
+        loadEnergyList();
+        loadTransportList();
+        loadRecycleList();
+       
         welcomeLabel.setText("Welcome to GreenShift \n" +
                      "Your Personal Climate Impact Tracker\n\n" +
                      "Thank you for joining us on this journey toward a healthier planet!\n" +
@@ -67,151 +54,11 @@ public class MainGUI extends javax.swing.JFrame {
                      "• Learn About Yourself: Take a fun quiz to evaluate your lifestyle.\n\n" +
                      "Together, we can make the shift toward a greener future.\n\n" +
                      "Let’s get started! Pick an app from the navbar to begin");
+
+
+
+
     }
-
-    ////////////////////Sean's section - Tracker things/////////////////////////////////////////////
-    private void loadTracker(){  //a method to just read in and load list into the ArrayList
-
-    File f;
-    FileInputStream fStream;
-    ObjectInputStream oStream;
-    try{
-        f = new File("output.dat");
-        fStream = new FileInputStream(f); 
-        oStream = new ObjectInputStream(fStream);
-
-        trackerList = (ArrayList<ClimateAction>)oStream.readObject();
-
-        oStream.close();
-    }
-    catch(IOException |ClassNotFoundException e){
-        System.out.println(e);
-    }
-    }
-    
-    private void saveTracker(){//a method to just save the ArrayList to file
-        File f;
-        FileOutputStream fStream;
-        ObjectOutputStream oStream;
-        
-        try{
-            f = new File("output.dat");
-            fStream = new FileOutputStream(f);
-            oStream = new ObjectOutputStream(fStream);
-            
-            oStream.writeObject(trackerList);
-            oStream.close();
-             trackerDisplay.append("\nAction Tracker Saved");
-        }
-        catch(IOException e){
-            System.out.println(e);
-        }
-    }
-    
-    private void displayAllTracker(){
-        trackerDisplay.setText(""); //clear the display
-        if(trackerList.isEmpty()){
-            trackerDisplay.setText("Nothing in yout tracker yet!");
-        }else{
-            ClimateAction temp; //temp to store objects into the list
-            for(int i = 0; i < trackerList.size(); i++){
-                temp = trackerList.get(i);
-                trackerDisplay.append(temp.toString()+"\n");
-            } 
-        }        
-    }
-    
-    ////////////////////Andrei section - quiz things/////////////////////////////////////////////
-    private void loadQuestion() {
-    Question currentQuestion = quizApp.getCurrentQuestion();
-    questionTa.setText(currentQuestion.getQuestionText());
-    String[] options = currentQuestion.getAnswers();
-    answerOne.setText(options[0]);
-    answerTwo.setText(options[1]);
-    answerThree.setText(options[2]);
-    answerFour.setText(options[3]);
-    
-    // Clears previous answer seleciton when loading a new question
-    answerBtnGroup.clearSelection();    
-
-    // Restore previous selection
-    int selectedAnswer = quizApp.getUserAnswer();
-    if (selectedAnswer != -1) {
-        switch (selectedAnswer) {
-            case 0 -> answerOne.setSelected(true);
-            case 1 -> answerTwo.setSelected(true);
-            case 2 -> answerThree.setSelected(true);
-            case 3 -> answerFour.setSelected(true);
-        }
-    }
-}
-
-    //simple save answer method
-private void saveAnswer() {
-    if (answerOne.isSelected()) {
-        quizApp.setUserAnswer(0);
-    } else if (answerTwo.isSelected()) {
-        quizApp.setUserAnswer(1);
-    } else if (answerThree.isSelected()) {
-        quizApp.setUserAnswer(2);
-    } else if (answerFour.isSelected()) {
-        quizApp.setUserAnswer(3);
-    }
-}
-
-
-    //load questions from Questions.txt 
-private List<Question> loadQuestionsFromFile(String filename) {
-    List<Question> questions = new ArrayList<>();
-    try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            // Read the question text
-            String questionText = line;
-
-            // Read the 4 answer options
-            String[] answers = new String[4];
-            for (int i = 0; i < 4; i++) {
-                answers[i] = reader.readLine();
-            }
-
-            // Read the correct answer index
-            int correctAnswer = Integer.parseInt(reader.readLine());
-
-            // Create and add the question object
-            questions.add(new Question(questionText, answers, correctAnswer));
-
-            // Skip blank line (if present)
-            reader.readLine();
-        }
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error loading questions: " + e.getMessage());
-    }
-    return questions;
-}
-
-private void resetQuiz() {
-    // Clear user answers
-    for (int i = 0; i < quizApp.getTotalQuestions(); i++) {
-        quizApp.setUserAnswer(-1);
-    }
-
-    // Reset to the first question
-    quizApp.previousQuestion(); // Ensure it navigates to the start
-    while (quizApp.hasPreviousQuestion()) {
-        quizApp.previousQuestion();
-    }
-
-    // Reload the first question
-    loadQuestion();
-
-    // Reset UI components
-    answerBtnGroup.clearSelection();
-    quizResetBtn.setVisible(false); // Hide reset button
-    nextQuestionBtn.setVisible(true); // Show navigation buttons
-    prevQuestionBtn.setVisible(true);
-}
-
 
     
     /**
@@ -223,7 +70,7 @@ private void resetQuiz() {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        answerBtnGroup = new javax.swing.ButtonGroup();
+        tipButtonGroup1 = new javax.swing.ButtonGroup();
         Navbar = new javax.swing.JPanel();
         navExitBtn = new javax.swing.JButton();
         navQuizBtn = new javax.swing.JButton();
@@ -236,13 +83,16 @@ private void resetQuiz() {
         TipPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        questionTa1 = new javax.swing.JTextArea();
-        answerOne1 = new javax.swing.JRadioButton();
-        answerOne2 = new javax.swing.JRadioButton();
-        answerOne3 = new javax.swing.JRadioButton();
-        prevQuestionBtn1 = new javax.swing.JButton();
-        nextQuestionBtn1 = new javax.swing.JButton();
+        tipTa1 = new javax.swing.JTextArea();
+        addBtn1 = new javax.swing.JButton();
+        nextTipBtn1 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        energyButton = new javax.swing.JRadioButton();
+        transportButton = new javax.swing.JRadioButton();
+        recycleButton = new javax.swing.JRadioButton();
+        AddTipTF = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        prevTipBtn2 = new javax.swing.JButton();
         QuizPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         questionTa = new javax.swing.JTextArea();
@@ -253,17 +103,14 @@ private void resetQuiz() {
         answerFour = new javax.swing.JRadioButton();
         prevQuestionBtn = new javax.swing.JButton();
         nextQuestionBtn = new javax.swing.JButton();
-        quizResetBtn = new javax.swing.JButton();
-        selectAnswerlbl = new javax.swing.JLabel();
         TrackerPanel = new javax.swing.JPanel();
-        deleteBTNtracker = new javax.swing.JToggleButton();
-        addBTNtracker = new javax.swing.JToggleButton();
-        nextBTNtracker = new javax.swing.JButton();
-        trackerDisplay = new java.awt.TextArea();
-        actionInput = new javax.swing.JTextField();
+        deleteBTN = new javax.swing.JToggleButton();
+        addBTN1 = new javax.swing.JToggleButton();
+        nextBTN = new javax.swing.JButton();
+        textArea2 = new java.awt.TextArea();
+        jTextField1 = new javax.swing.JTextField();
         label1 = new java.awt.Label();
         label2 = new java.awt.Label();
-        updateStatusBTNtracker = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
@@ -393,43 +240,69 @@ private void resetQuiz() {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Climate Tips");
 
-        questionTa1.setEditable(false);
-        questionTa1.setBackground(new java.awt.Color(255, 255, 255));
-        questionTa1.setColumns(20);
-        questionTa1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        questionTa1.setRows(5);
-        questionTa1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jScrollPane2.setViewportView(questionTa1);
+        tipTa1.setEditable(false);
+        tipTa1.setBackground(new java.awt.Color(255, 255, 255));
+        tipTa1.setColumns(20);
+        tipTa1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        tipTa1.setLineWrap(true);
+        tipTa1.setRows(5);
+        tipTa1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jScrollPane2.setViewportView(tipTa1);
 
-        answerOne1.setText("Transportation");
-        answerOne1.addActionListener(new java.awt.event.ActionListener() {
+        addBtn1.setText("Add");
+        addBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        addBtn1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                answerOne1ActionPerformed(evt);
+                addBtn1ActionPerformed(evt);
             }
         });
 
-        answerOne2.setText("Recycling");
-        answerOne2.addActionListener(new java.awt.event.ActionListener() {
+        nextTipBtn1.setText("Next");
+        nextTipBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        nextTipBtn1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                answerOne2ActionPerformed(evt);
+                nextTipBtn1ActionPerformed(evt);
             }
         });
-
-        answerOne3.setLabel("Energy");
-        answerOne3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                answerOne3ActionPerformed(evt);
-            }
-        });
-
-        prevQuestionBtn1.setText("Previous");
-        prevQuestionBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        nextQuestionBtn1.setText("Next");
-        nextQuestionBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Please select which category of tips you would like to receive: ");
+
+        tipButtonGroup1.add(energyButton);
+        energyButton.setText("Energy");
+        energyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                energyButtonActionPerformed(evt);
+            }
+        });
+
+        tipButtonGroup1.add(transportButton);
+        transportButton.setText("Transportation");
+        transportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                transportButtonActionPerformed(evt);
+            }
+        });
+
+        tipButtonGroup1.add(recycleButton);
+        recycleButton.setText("Recycling");
+        recycleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                recycleButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("You may enter any other suitable tips:");
+
+        prevTipBtn2.setText("Previous");
+        prevTipBtn2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        prevTipBtn2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prevTipBtn2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout TipPanelLayout = new javax.swing.GroupLayout(TipPanel);
         TipPanel.setLayout(TipPanelLayout);
@@ -439,29 +312,39 @@ private void resetQuiz() {
                 .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(TipPanelLayout.createSequentialGroup()
                         .addGap(161, 161, 161)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(TipPanelLayout.createSequentialGroup()
                         .addGap(42, 42, 42)
-                        .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(TipPanelLayout.createSequentialGroup()
-                                .addComponent(answerOne3, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(45, 45, 45)
-                                .addComponent(answerOne1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(answerOne2, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(TipPanelLayout.createSequentialGroup()
-                        .addGap(128, 128, 128)
-                        .addComponent(prevQuestionBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(nextQuestionBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(79, 79, 79)))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(39, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(126, 126, 126))
+                .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
+                            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(TipPanelLayout.createSequentialGroup()
+                                    .addComponent(energyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(68, 68, 68)
+                                    .addComponent(transportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(89, 89, 89)
+                                    .addComponent(recycleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(126, 126, 126))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(AddTipTF, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(43, 43, 43))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
+                            .addComponent(nextTipBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(214, 214, 214)))))
+            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(TipPanelLayout.createSequentialGroup()
+                    .addGap(165, 165, 165)
+                    .addComponent(prevTipBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(389, Short.MAX_VALUE)))
         );
         TipPanelLayout.setVerticalGroup(
             TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -472,16 +355,25 @@ private void resetQuiz() {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44)
                 .addComponent(jLabel3)
-                .addGap(57, 57, 57)
+                .addGap(27, 27, 27)
                 .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(answerOne3, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                    .addComponent(answerOne1, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                    .addComponent(answerOne2, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE))
-                .addGap(61, 61, 61)
+                    .addComponent(energyButton)
+                    .addComponent(transportButton)
+                    .addComponent(recycleButton))
+                .addGap(28, 28, 28)
+                .addComponent(nextTipBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
                 .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(prevQuestionBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nextQuestionBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(117, 117, 117))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(AddTipTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(121, Short.MAX_VALUE))
+            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
+                    .addContainerGap(415, Short.MAX_VALUE)
+                    .addComponent(prevTipBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(220, 220, 220)))
         );
 
         Background.add(TipPanel, "card2");
@@ -489,12 +381,11 @@ private void resetQuiz() {
         QuizPanel.setBackground(new java.awt.Color(1, 148, 141));
 
         questionTa.setEditable(false);
-        questionTa.setBackground(new java.awt.Color(28, 88, 115));
+        questionTa.setBackground(new java.awt.Color(255, 255, 255));
         questionTa.setColumns(20);
-        questionTa.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        questionTa.setForeground(new java.awt.Color(255, 255, 255));
+        questionTa.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         questionTa.setRows(5);
-        questionTa.setBorder(null);
+        questionTa.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jScrollPane1.setViewportView(questionTa);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
@@ -502,9 +393,6 @@ private void resetQuiz() {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Climate Quiz");
 
-        answerOne.setBackground(new java.awt.Color(1, 148, 141));
-        answerOne.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        answerOne.setForeground(new java.awt.Color(255, 255, 255));
         answerOne.setText("Answer 1");
         answerOne.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -512,62 +400,17 @@ private void resetQuiz() {
             }
         });
 
-        answerTwo.setBackground(new java.awt.Color(1, 148, 141));
-        answerTwo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        answerTwo.setForeground(new java.awt.Color(255, 255, 255));
         answerTwo.setText("Answer 2");
 
-        answerThree.setBackground(new java.awt.Color(1, 148, 141));
-        answerThree.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        answerThree.setForeground(new java.awt.Color(255, 255, 255));
         answerThree.setText("Answer 3");
 
-        answerFour.setBackground(new java.awt.Color(1, 148, 141));
-        answerFour.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        answerFour.setForeground(new java.awt.Color(255, 255, 255));
         answerFour.setText("Answer 4");
 
-        prevQuestionBtn.setBackground(new java.awt.Color(2, 61, 84));
-        prevQuestionBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        prevQuestionBtn.setForeground(new java.awt.Color(255, 255, 255));
-        prevQuestionBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backward.png"))); // NOI18N
         prevQuestionBtn.setText("Previous");
-        prevQuestionBtn.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        prevQuestionBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                prevQuestionBtnActionPerformed(evt);
-            }
-        });
+        prevQuestionBtn.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        nextQuestionBtn.setBackground(new java.awt.Color(2, 61, 84));
-        nextQuestionBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        nextQuestionBtn.setForeground(new java.awt.Color(255, 255, 255));
-        nextQuestionBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/forward.png"))); // NOI18N
         nextQuestionBtn.setText("Next");
-        nextQuestionBtn.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        nextQuestionBtn.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        nextQuestionBtn.setIconTextGap(7);
-        nextQuestionBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextQuestionBtnActionPerformed(evt);
-            }
-        });
-
-        quizResetBtn.setBackground(new java.awt.Color(2, 61, 84));
-        quizResetBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        quizResetBtn.setForeground(new java.awt.Color(255, 255, 255));
-        quizResetBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/reset.png"))); // NOI18N
-        quizResetBtn.setText("Retry?");
-        quizResetBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                quizResetBtnActionPerformed(evt);
-            }
-        });
-
-        selectAnswerlbl.setBackground(new java.awt.Color(1, 148, 141));
-        selectAnswerlbl.setFont(new java.awt.Font("Segoe UI", 1, 19)); // NOI18N
-        selectAnswerlbl.setForeground(new java.awt.Color(255, 255, 255));
-        selectAnswerlbl.setText("Select an answer:");
+        nextQuestionBtn.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         javax.swing.GroupLayout QuizPanelLayout = new javax.swing.GroupLayout(QuizPanel);
         QuizPanel.setLayout(QuizPanelLayout);
@@ -575,40 +418,29 @@ private void resetQuiz() {
             QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(QuizPanelLayout.createSequentialGroup()
                 .addGap(37, 37, 37)
-                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(QuizPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(QuizPanelLayout.createSequentialGroup()
-                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                                .addComponent(answerThree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(QuizPanelLayout.createSequentialGroup()
                                 .addGap(62, 62, 62)
-                                .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(answerThree, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
+                                .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(QuizPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
                                 .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(111, Short.MAX_VALUE))
-                            .addGroup(QuizPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(answerTwo, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
-                                    .addComponent(answerFour, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(0, 0, Short.MAX_VALUE))))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(quizResetBtn)
-                .addGap(279, 279, 279))
+                                .addGap(69, 69, 69))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
+                                .addComponent(answerFour, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(39, 39, 39))
+                            .addComponent(answerTwo, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(44, Short.MAX_VALUE))
             .addGroup(QuizPanelLayout.createSequentialGroup()
-                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(QuizPanelLayout.createSequentialGroup()
-                        .addGap(158, 158, 158)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(QuizPanelLayout.createSequentialGroup()
-                        .addGap(244, 244, 244)
-                        .addComponent(selectAnswerlbl, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(158, 158, 158)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         QuizPanelLayout.setVerticalGroup(
@@ -616,11 +448,9 @@ private void resetQuiz() {
             .addGroup(QuizPanelLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(selectAnswerlbl, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addGap(41, 41, 41)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
                     .addComponent(answerTwo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -632,39 +462,37 @@ private void resetQuiz() {
                 .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(quizResetBtn)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
 
         Background.add(QuizPanel, "card4");
 
         TrackerPanel.setBackground(new java.awt.Color(1, 148, 141));
 
-        deleteBTNtracker.setText("Delete");
-        deleteBTNtracker.setBorder(null);
-        deleteBTNtracker.addActionListener(new java.awt.event.ActionListener() {
+        deleteBTN.setText("Delete");
+        deleteBTN.setBorder(null);
+        deleteBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteBTNtrackerActionPerformed(evt);
+                deleteBTNActionPerformed(evt);
             }
         });
 
-        addBTNtracker.setText("Add");
-        addBTNtracker.setBorder(null);
-        addBTNtracker.addActionListener(new java.awt.event.ActionListener() {
+        addBTN1.setText("Add");
+        addBTN1.setBorder(null);
+        addBTN1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addBTNtrackerActionPerformed(evt);
+                addBTN1ActionPerformed(evt);
             }
         });
 
-        nextBTNtracker.setText("Next");
-        nextBTNtracker.addActionListener(new java.awt.event.ActionListener() {
+        nextBTN.setText("Next");
+        nextBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextBTNtrackerActionPerformed(evt);
+                nextBTNActionPerformed(evt);
             }
         });
 
-        actionInput.setToolTipText("");
+        jTextField1.setText("jTextField1");
 
         label1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         label1.setForeground(new java.awt.Color(242, 242, 242));
@@ -676,38 +504,28 @@ private void resetQuiz() {
         label2.setName(""); // NOI18N
         label2.setText("Action Tracker");
 
-        updateStatusBTNtracker.setText("Update Status");
-        updateStatusBTNtracker.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateStatusBTNtrackerActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout TrackerPanelLayout = new javax.swing.GroupLayout(TrackerPanel);
         TrackerPanel.setLayout(TrackerPanelLayout);
         TrackerPanelLayout.setHorizontalGroup(
             TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TrackerPanelLayout.createSequentialGroup()
                 .addGap(88, 88, 88)
-                .addComponent(addBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(deleteBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(82, 82, 82))
             .addGroup(TrackerPanelLayout.createSequentialGroup()
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(TrackerPanelLayout.createSequentialGroup()
                         .addGap(34, 34, 34)
-                        .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(TrackerPanelLayout.createSequentialGroup()
-                                .addComponent(updateStatusBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(TrackerPanelLayout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(actionInput, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(22, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TrackerPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -720,19 +538,17 @@ private void resetQuiz() {
                 .addGap(23, 23, 23)
                 .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22)
-                .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateStatusBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(59, 59, 59)
-                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(actionInput, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(label1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29))
         );
 
@@ -757,70 +573,133 @@ private void resetQuiz() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void deleteBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBTNtrackerActionPerformed
-        // Tracker's Delete Button
-
-        String searchTerm = JOptionPane.showInputDialog(null, "Enter task name to delete");
-        if (searchTerm != null && !searchTerm.isEmpty()) {
-            for (int i = 0; i < trackerList.size(); i++) {
-                ClimateAction temp = trackerList.get(i);
-                if (searchTerm.equalsIgnoreCase(temp.getName())) {
-                    trackerList.remove(i); // Delete the action
-                    saveTracker(); // Save the updated list
-                    trackerDisplay.append("\nDeleted: " + temp.getName());
-                    return;
-                }
-            }
-            trackerDisplay.append("\nNo matching task found.");
-        } else {
-            trackerDisplay.append("\nPlease enter a valid task name.");
-        }
-    }//GEN-LAST:event_deleteBTNtrackerActionPerformed
-
-    private void addBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBTNtrackerActionPerformed
-        // Tracker's Add Button
-
-        ClimateAction temp;  // Temporary object for neatness
-        String name = actionInput.getText();  // Get action name from user input
-        
-        // Optionally, prompt the user for action type and initial status
-        String actionType = JOptionPane.showInputDialog("Enter action type (e.g., Recycling, Energy Saving):");
-        String status = "Pending";  // Default status
-        
-        // Create action based on type
-        if (actionType.equalsIgnoreCase("Recycling")) {
-            temp = new RecyclingAction(name);  // Create a RecyclingAction object
-        } else if (actionType.equalsIgnoreCase("Energy Saving")) {
-            temp = new EnergySavingAction(name);  // Create an EnergySavingAction object
-        } else {
-            temp = new ClimateAction(name, status);  // Default ClimateAction if unknown type
-        }
-        
-        trackerList.add(temp);  // Add to the tracker list
-        saveTracker();  // Save list to the file
-        
-        trackerDisplay.append("\n" + name + " added with status: " + status);
-    }//GEN-LAST:event_addBTNtrackerActionPerformed
-
-    private void nextBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBTNtrackerActionPerformed
-        // Tracker's Next Button
-        
-        if (!trackerList.isEmpty()) {
-            ClimateAction temp = trackerList.get(listIndex);  // Get current action
-            trackerDisplay.setText(temp.getActionType() + ": " + temp.getName() + " - Status: " + temp.getStatus());  // Display action info with status
-            listIndex++;  // Move to the next action
+    private void loadEnergyList(){  //Methods to just read in and load list into the ArrayLists
+       
+        File f;
+        FileInputStream fStream;
+        ObjectInputStream oStream;
+        try{
+            f = new File("EnergyOutput.dat");
+            fStream = new FileInputStream(f); 
+            oStream = new ObjectInputStream(fStream);
             
-            // Ensure we don't go past the end of the list
-            if (listIndex >= trackerList.size()) {
-                listIndex = 0;  // Start over when reaching the end
-            }
-        } else {
-            trackerDisplay.setText("No actions in your tracker yet!");
+            energytips = (ArrayList<EnergyTips>)oStream.readObject();
+            
+            oStream.close();
         }
-    }//GEN-LAST:event_nextBTNtrackerActionPerformed
+        catch(IOException |ClassNotFoundException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void loadTransportList(){
+       
+        File f;
+        FileInputStream fStream;
+        ObjectInputStream oStream;
+        try{
+            f = new File("TransportOutput.dat");
+            fStream = new FileInputStream(f); 
+            oStream = new ObjectInputStream(fStream);
+            
+            transporttips = (ArrayList<TransportTips>)oStream.readObject();
+            
+            oStream.close();
+        }
+        catch(IOException |ClassNotFoundException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void loadRecycleList(){
+       
+        File f;
+        FileInputStream fStream;
+        ObjectInputStream oStream;
+        try{
+            f = new File("RecycleOutput.dat");
+            fStream = new FileInputStream(f); 
+            oStream = new ObjectInputStream(fStream);
+            
+            recycletips = (ArrayList<RecycleTips>)oStream.readObject();
+            
+            oStream.close();
+        }
+        catch(IOException |ClassNotFoundException e){
+            System.out.println(e);
+        }
+    }
+    private void saveEnergyList(){
+        File f;
+        FileOutputStream fStream;
+        ObjectOutputStream oStream;
+        
+        try{
+            f = new File("EnergyOutput.dat");
+            fStream = new FileOutputStream(f);
+            oStream = new ObjectOutputStream(fStream);
+            
+            oStream.writeObject(energytips);
+            oStream.close();
+             tipTa1.append("\nTip Added");
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void saveTransportList(){
+        File f;
+        FileOutputStream fStream;
+        ObjectOutputStream oStream;
+        
+        try{
+            f = new File("TransportOutput.dat");
+            fStream = new FileOutputStream(f);
+            oStream = new ObjectOutputStream(fStream);
+            
+            oStream.writeObject(transporttips);
+            oStream.close();
+             tipTa1.append("\nTip Added");
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+    }
+    
+    private void saveRecycleList(){//Methods to just save the ArrayList to files
+        File f;
+        FileOutputStream fStream;
+        ObjectOutputStream oStream;
+        
+        try{
+            f = new File("RecycleOutput.dat");
+            fStream = new FileOutputStream(f);
+            oStream = new ObjectOutputStream(fStream);
+            
+            oStream.writeObject(recycletips);
+            oStream.close();
+             tipTa1.append("\nTip Added");
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+    }
+    private void deleteBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBTNActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_deleteBTNActionPerformed
+
+    private void addBTN1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBTN1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addBTN1ActionPerformed
+
+    private void nextBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBTNActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nextBTNActionPerformed
 
     private void answerOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerOneActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_answerOneActionPerformed
 
     private void navExitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navExitBtnActionPerformed
@@ -908,87 +787,167 @@ private void resetQuiz() {
         navQuizBtn.setForeground(new Color(255, 255, 255));
     }//GEN-LAST:event_navTrackerBtnActionPerformed
 
-    private void answerOne1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerOne1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_answerOne1ActionPerformed
+    private void addBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtn1ActionPerformed
 
-    private void answerOne2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerOne2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_answerOne2ActionPerformed
+        if(energyButton.isSelected()){
+            EnergyTips temp;
+            String tipEnergy = AddTipTF.getText();
+            temp = new EnergyTips(tipEnergy);
 
-    private void answerOne3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerOne3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_answerOne3ActionPerformed
+            energytips.add(temp);
+            saveEnergyList();
+        }else if(transportButton.isSelected()){
+            TransportTips temp;  //temp obj
+            String tipTransport = AddTipTF.getText();
+            temp = new TransportTips(tipTransport);
 
-    ////////QUIZZ NEXT/PREV/RESET BUTTONS///////////////
-    private void nextQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextQuestionBtnActionPerformed
+            transporttips.add(temp);
+            saveTransportList();
+        }else if(recycleButton.isSelected()){
+            RecycleTips temp; 
+            String tipRecycle = AddTipTF.getText();
+            temp = new RecycleTips(tipRecycle);
 
-        saveAnswer();
-
-        // Clear all radio button selections before moving to next question
-        answerBtnGroup.clearSelection();    
-
-        // Check if it's the final question
-        if (quizApp.hasNextQuestion()) {
-            quizApp.nextQuestion();
-            loadQuestion();
+            recycletips.add(temp);
+            saveRecycleList();
         }
-        else {
-            // End of the quiz: display the score
-            int score = quizApp.calculateScore();
-            questionTa.setText("Quiz Completed!\nYour score: " + score + "/" + quizApp.getTotalQuestions());
+    }//GEN-LAST:event_addBtn1ActionPerformed
 
-            // Show the reset button
-            quizResetBtn.setVisible(true);
-
-            // Hide next/prev buttons and answers
-            selectAnswerlbl.setVisible(false);
-            answerFour.setVisible(false);
-            answerThree.setVisible(false);
-            answerTwo.setVisible(false);
-            answerOne.setVisible(false);
-            nextQuestionBtn.setVisible(false);
-            prevQuestionBtn.setVisible(false);
-        }
-    }//GEN-LAST:event_nextQuestionBtnActionPerformed
-
-    private void prevQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevQuestionBtnActionPerformed
-        // TODO add your handling code here:
-    saveAnswer();
-        if (quizApp.hasPreviousQuestion()) {
-            quizApp.previousQuestion();
-            loadQuestion();
-        }
-    }//GEN-LAST:event_prevQuestionBtnActionPerformed
-
-    private void quizResetBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quizResetBtnActionPerformed
-        // TODO add your handling code here:
-        resetQuiz();
-
-        selectAnswerlbl.setVisible(true);
-        answerFour.setVisible(true);
-        answerThree.setVisible(true);
-        answerTwo.setVisible(true);
-        answerOne.setVisible(true);
-    }//GEN-LAST:event_quizResetBtnActionPerformed
-
-    private void updateStatusBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStatusBTNtrackerActionPerformed
-        //Update Status of a Climate Action
-        
-        String searchTerm = JOptionPane.showInputDialog(null, "Enter task name to update status:");
-        String newStatus = JOptionPane.showInputDialog("Enter new status (e.g., Completed, In Progress):");
-        
-        for (int i = 0; i < trackerList.size(); i++) {
-            ClimateAction temp = trackerList.get(i);
-            if (searchTerm.equalsIgnoreCase(temp.getName())) {
-                temp.setStatus(newStatus);  // Update the status of the action
-                saveTracker();  // Save the list again
-                trackerDisplay.append("\nStatus of " + searchTerm + " updated to: " + newStatus);
-                return;
+    private void nextTipBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextTipBtn1ActionPerformed
+  
+        if(energyButton.isSelected()){
+            if(!energytips.isEmpty()){
+                EnergyTips temp = energytips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+                
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        } else if(transportButton.isSelected()){
+            if(!transporttips.isEmpty()){
+                TransportTips temp = transporttips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+              
+                if(currentIndex >= transporttips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        }else if(recycleButton.isSelected()){
+            if(!recycletips.isEmpty()){
+                RecycleTips temp = recycletips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+              
+                if(currentIndex >= recycletips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
             }
         }
-        trackerDisplay.append("\nTask not found.");
-    }//GEN-LAST:event_updateStatusBTNtrackerActionPerformed
+    }//GEN-LAST:event_nextTipBtn1ActionPerformed
+
+    private void energyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_energyButtonActionPerformed
+    
+        tipTa1.setText("");
+            if(!energytips.isEmpty()){
+                EnergyTips temp = energytips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+                
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+    }//GEN-LAST:event_energyButtonActionPerformed
+
+    private void prevTipBtn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevTipBtn2ActionPerformed
+       
+        if(energyButton.isSelected()){
+            if(!energytips.isEmpty()){
+                EnergyTips temp = energytips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex--; 
+              
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }else if(currentIndex <= energytips.size()){
+                currentIndex = 0;
+            }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        } else if(transportButton.isSelected()){
+            if(!transporttips.isEmpty()){
+                TransportTips temp = transporttips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex--;
+              
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }else if(currentIndex <= energytips.size()){
+                currentIndex = 0;
+            }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        } else if(recycleButton.isSelected()){
+            if(!recycletips.isEmpty()){
+                RecycleTips temp = recycletips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex--; 
+              
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }else if(currentIndex <= energytips.size()){
+                currentIndex = 0;
+            }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+        }
+    }//GEN-LAST:event_prevTipBtn2ActionPerformed
+
+    private void recycleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recycleButtonActionPerformed
+    
+            if(!recycletips.isEmpty()){
+                RecycleTips temp = recycletips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++;
+             
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+            
+    }//GEN-LAST:event_recycleButtonActionPerformed
+
+    private void transportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transportButtonActionPerformed
+     
+            if(!transporttips.isEmpty()){
+                TransportTips temp = transporttips.get(currentIndex);
+                tipTa1.setText(temp.toString());            
+                currentIndex++; 
+             
+                if(currentIndex >= energytips.size()){ 
+                    currentIndex = 0; 
+                }
+            }else{
+                 tipTa1.setText("There are no tips to display");
+            }
+    }//GEN-LAST:event_transportButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1026,28 +985,28 @@ private void resetQuiz() {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField AddTipTF;
     private javax.swing.JPanel Background;
     private javax.swing.JPanel Navbar;
     private javax.swing.JPanel QuizPanel;
     private javax.swing.JPanel TipPanel;
     private javax.swing.JPanel TrackerPanel;
     private javax.swing.JPanel WelcomePanel;
-    private javax.swing.JTextField actionInput;
-    private javax.swing.JToggleButton addBTNtracker;
-    private javax.swing.ButtonGroup answerBtnGroup;
+    private javax.swing.JToggleButton addBTN1;
+    private javax.swing.JButton addBtn1;
     private javax.swing.JRadioButton answerFour;
     private javax.swing.JRadioButton answerOne;
-    private javax.swing.JRadioButton answerOne1;
-    private javax.swing.JRadioButton answerOne2;
-    private javax.swing.JRadioButton answerOne3;
     private javax.swing.JRadioButton answerThree;
     private javax.swing.JRadioButton answerTwo;
-    private javax.swing.JToggleButton deleteBTNtracker;
+    private javax.swing.JToggleButton deleteBTN;
+    private javax.swing.JRadioButton energyButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField jTextField1;
     private java.awt.Label label1;
     private java.awt.Label label2;
     private java.awt.Label label3;
@@ -1055,17 +1014,17 @@ private void resetQuiz() {
     private javax.swing.JButton navQuizBtn;
     private javax.swing.JButton navTipBtn;
     private javax.swing.JButton navTrackerBtn;
-    private javax.swing.JButton nextBTNtracker;
+    private javax.swing.JButton nextBTN;
     private javax.swing.JButton nextQuestionBtn;
-    private javax.swing.JButton nextQuestionBtn1;
+    private javax.swing.JButton nextTipBtn1;
     private javax.swing.JButton prevQuestionBtn;
-    private javax.swing.JButton prevQuestionBtn1;
+    private javax.swing.JButton prevTipBtn2;
     private javax.swing.JTextArea questionTa;
-    private javax.swing.JTextArea questionTa1;
-    private javax.swing.JButton quizResetBtn;
-    private javax.swing.JLabel selectAnswerlbl;
-    private java.awt.TextArea trackerDisplay;
-    private javax.swing.JButton updateStatusBTNtracker;
+    private javax.swing.JRadioButton recycleButton;
+    private java.awt.TextArea textArea2;
+    private javax.swing.ButtonGroup tipButtonGroup1;
+    private javax.swing.JTextArea tipTa1;
+    private javax.swing.JRadioButton transportButton;
     private java.awt.TextArea welcomeLabel;
     // End of variables declaration//GEN-END:variables
 }
