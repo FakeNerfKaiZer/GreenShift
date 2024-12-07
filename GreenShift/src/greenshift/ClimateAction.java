@@ -11,23 +11,33 @@ import java.io.Serializable;
  * @author bloxd
  */
 public class ClimateAction implements Serializable{
-    
-    String name;
+    protected String name;
+    protected String status;
 
-    public ClimateAction(String name){
+    public ClimateAction(String name, String status) {
         this.name = name;
+        this.status = status;
     }
 
-    public ClimateAction() {
-    }
-    
     public String getName() {
         return name;
     }
-    
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    // This method can be overridden in subclasses
+    public String getActionType() {
+        return "General Action";
+    }
+
     @Override
     public String toString() {
-        return name;
+        return name + " - Status: " + status;
     }
-    
 }

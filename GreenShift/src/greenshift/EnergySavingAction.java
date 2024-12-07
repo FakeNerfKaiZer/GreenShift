@@ -22,6 +22,6 @@ public class EnergySavingAction extends ClimateAction {
     // Override setStatus if needed
     @Override
     public void setStatus(String status) {
-        super.setStatus(status); // You can modify status handling if needed
+        super.setStatus(status);
     }
 }

@@ -6,14 +6,18 @@ package greenshift;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.io.BufferedReader;
 import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -25,24 +29,58 @@ public class MainGUI extends javax.swing.JFrame {
     ArrayList <RecycleTips> recycletips;
     int currentIndex;
     
+    private QuizApp quizApp;
+    
+    ArrayList <ClimateAction> trackerList;// Creating the tracker ArrayList
+    int listIndex; //Creating the list Index
+   
+    //Displays the welcome page on launch
     public void showWelcomePanel() {
-    CardLayout cardLayout = (CardLayout) Background.getLayout();
-    cardLayout.show(Background, "WelcomePanel"); // Use the name assigned to WelcomePanel
-}
+        CardLayout cardLayout = (CardLayout) Background.getLayout();
+        cardLayout.show(Background, "WelcomePanel");
+        System.out.println("Welcome to GreenShift");
+    }
     /**
      * Creates new form GreenShiftGUI
      */
     public MainGUI() {        
         initComponents();
-        energytips = new ArrayList<>(); //create the arraylists
+        
+        energytips = new ArrayList<>(); //create the arraylists for the Tip Generator
         transporttips = new ArrayList<>();
         recycletips = new ArrayList<>();
         
         currentIndex = 0; 
+        
         loadEnergyList();
         loadTransportList();
         loadRecycleList();
        
+        quizResetBtn.setVisible(false);
+        
+        //Button group for quiz answers, helps with bug fixes
+        answerBtnGroup.add(answerOne);
+        answerBtnGroup.add(answerTwo);
+        answerBtnGroup.add(answerThree);
+        answerBtnGroup.add(answerFour);
+        
+        trackerList = new ArrayList<>(); //Create the arraylist for the Tracker
+        listIndex = 0;
+        
+        List<Question> questions = loadQuestionsFromFile("questions.txt"); //Loads questions from txt file for the Quiz
+        quizApp = new QuizApp(questions);
+        loadQuestion(); 
+        
+        loadTracker();
+        displayAllTracker();
+        
+        
+        Background.setLayout(new CardLayout());
+        Background.add(WelcomePanel, "WelcomePanel");
+
+        // Set initial visibility state
+        WelcomePanel.setVisible(true);
+        
         welcomeLabel.setText("Welcome to GreenShift \n" +
                      "Your Personal Climate Impact Tracker\n\n" +
                      "Thank you for joining us on this journey toward a healthier planet!\n" +
@@ -53,14 +91,151 @@ public class MainGUI extends javax.swing.JFrame {
                      "• Get Inspired: Discover simple tips to reduce your carbon footprint.\n" +
                      "• Learn About Yourself: Take a fun quiz to evaluate your lifestyle.\n\n" +
                      "Together, we can make the shift toward a greener future.\n\n" +
-                     "Let’s get started! Pick an app from the navbar to begin");
-
-
-
-
+                     "Let’s get started! Pick a function from the navbar to begin");
     }
 
+    ////////////////////Sean's section - Tracker things/////////////////////////////////////////////
+    private void loadTracker(){  //a method to just read in and load list into the ArrayList
+
+        File f;
+        FileInputStream fStream;
+        ObjectInputStream oStream;
+        try{
+            f = new File("output.dat");
+            fStream = new FileInputStream(f); 
+            oStream = new ObjectInputStream(fStream);
+
+            trackerList = (ArrayList<ClimateAction>)oStream.readObject();
+
+            oStream.close();
+        }
+        catch(IOException |ClassNotFoundException e){
+            System.out.println(e);
+        }
+    }
     
+    private void saveTracker(){//a method to just save the ArrayList to file
+            File f;
+            FileOutputStream fStream;
+            ObjectOutputStream oStream;
+
+            try{
+                f = new File("output.dat");
+                fStream = new FileOutputStream(f);
+                oStream = new ObjectOutputStream(fStream);
+
+                oStream.writeObject(trackerList);
+                oStream.close();
+                 trackerDisplay.append("\nAction Tracker Saved");
+            }
+            catch(IOException e){
+                System.out.println(e);
+            }
+    }
+    
+    private void displayAllTracker(){
+        trackerDisplay.setText(""); //clear the display
+        if(trackerList.isEmpty()){
+            trackerDisplay.setText("Nothing in yout tracker yet!");
+        }else{
+            ClimateAction temp; //temp to store objects into the list
+            for(int i = 0; i < trackerList.size(); i++){
+                temp = trackerList.get(i);
+                trackerDisplay.append(temp.toString()+"\n");
+            } 
+        }        
+    }
+    
+    ////////////////////Andrei section - quiz things/////////////////////////////////////////////
+    private void loadQuestion() {
+        Question currentQuestion = quizApp.getCurrentQuestion();
+        questionTa.setText(currentQuestion.getQuestionText());
+        String[] options = currentQuestion.getAnswers();
+        answerOne.setText(options[0]);
+        answerTwo.setText(options[1]);
+        answerThree.setText(options[2]);
+        answerFour.setText(options[3]);
+
+        // Clears previous answer seleciton when loading a new question
+        answerBtnGroup.clearSelection();    
+
+        // Restore previous selection
+        int selectedAnswer = quizApp.getUserAnswer();
+        if (selectedAnswer != -1) {
+            switch (selectedAnswer) {
+                case 0 -> answerOne.setSelected(true);
+                case 1 -> answerTwo.setSelected(true);
+                case 2 -> answerThree.setSelected(true);
+                case 3 -> answerFour.setSelected(true);
+            }
+        }
+    }
+
+    //simple save answer method
+    private void saveAnswer() {
+        if (answerOne.isSelected()) {
+            quizApp.setUserAnswer(0);
+        } else if (answerTwo.isSelected()) {
+            quizApp.setUserAnswer(1);
+        } else if (answerThree.isSelected()) {
+            quizApp.setUserAnswer(2);
+        } else if (answerFour.isSelected()) {
+            quizApp.setUserAnswer(3);
+        }
+    }
+
+
+    //load questions from Questions.txt 
+    private List<Question> loadQuestionsFromFile(String filename) {
+        List<Question> questions = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Read the question text
+                String questionText = line;
+
+                // Read the 4 answer options
+                String[] answers = new String[4];
+                for (int i = 0; i < 4; i++) {
+                    answers[i] = reader.readLine();
+                }
+
+                // Read the correct answer index
+                int correctAnswer = Integer.parseInt(reader.readLine());
+
+                // Create and add the question object
+                questions.add(new Question(questionText, answers, correctAnswer));
+
+                // Skip blank line (if present)
+                reader.readLine();
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading questions: " + e.getMessage());
+        }
+        return questions;
+    }
+
+    private void resetQuiz() {
+        // Clear user answers
+        for (int i = 0; i < quizApp.getTotalQuestions(); i++) {
+            quizApp.setUserAnswer(-1);
+        }
+
+        // Reset to the first question
+        quizApp.previousQuestion(); // Ensure it navigates to the start
+        while (quizApp.hasPreviousQuestion()) {
+            quizApp.previousQuestion();
+        }
+
+        // Reload the first question
+        loadQuestion();
+
+        // Reset UI components
+        answerBtnGroup.clearSelection();
+        quizResetBtn.setVisible(false); // Hide reset button
+        nextQuestionBtn.setVisible(true); // Show navigation buttons
+        prevQuestionBtn.setVisible(true);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -71,6 +246,7 @@ public class MainGUI extends javax.swing.JFrame {
     private void initComponents() {
 
         tipButtonGroup1 = new javax.swing.ButtonGroup();
+        answerBtnGroup = new javax.swing.ButtonGroup();
         Navbar = new javax.swing.JPanel();
         navExitBtn = new javax.swing.JButton();
         navQuizBtn = new javax.swing.JButton();
@@ -80,6 +256,18 @@ public class MainGUI extends javax.swing.JFrame {
         Background = new javax.swing.JPanel();
         WelcomePanel = new javax.swing.JPanel();
         welcomeLabel = new java.awt.TextArea();
+        QuizPanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        questionTa = new javax.swing.JTextArea();
+        jLabel5 = new javax.swing.JLabel();
+        answerOne = new javax.swing.JRadioButton();
+        answerTwo = new javax.swing.JRadioButton();
+        answerThree = new javax.swing.JRadioButton();
+        answerFour = new javax.swing.JRadioButton();
+        prevQuestionBtn = new javax.swing.JButton();
+        nextQuestionBtn = new javax.swing.JButton();
+        quizResetBtn = new javax.swing.JButton();
+        selectAnswerlbl = new javax.swing.JLabel();
         TipPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -93,24 +281,16 @@ public class MainGUI extends javax.swing.JFrame {
         AddTipTF = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         prevTipBtn2 = new javax.swing.JButton();
-        QuizPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        questionTa = new javax.swing.JTextArea();
-        jLabel1 = new javax.swing.JLabel();
-        answerOne = new javax.swing.JRadioButton();
-        answerTwo = new javax.swing.JRadioButton();
-        answerThree = new javax.swing.JRadioButton();
-        answerFour = new javax.swing.JRadioButton();
-        prevQuestionBtn = new javax.swing.JButton();
-        nextQuestionBtn = new javax.swing.JButton();
         TrackerPanel = new javax.swing.JPanel();
-        deleteBTN = new javax.swing.JToggleButton();
-        addBTN1 = new javax.swing.JToggleButton();
-        nextBTN = new javax.swing.JButton();
-        textArea2 = new java.awt.TextArea();
-        jTextField1 = new javax.swing.JTextField();
+        deleteBTNtracker = new javax.swing.JToggleButton();
+        addBTNtracker = new javax.swing.JToggleButton();
+        nextBTNtracker = new javax.swing.JButton();
+        trackerDisplay = new java.awt.TextArea();
+        actionInput = new javax.swing.JTextField();
         label1 = new java.awt.Label();
         label2 = new java.awt.Label();
+        displayAllBTNtracker = new javax.swing.JButton();
+        updateStatusBTNtracker1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
@@ -209,7 +389,7 @@ public class MainGUI extends javax.swing.JFrame {
 
         WelcomePanel.setBackground(new java.awt.Color(1, 148, 141));
 
-        welcomeLabel.setBackground(new java.awt.Color(0, 158, 130));
+        welcomeLabel.setBackground(new java.awt.Color(28, 88, 115));
         welcomeLabel.setEditable(false);
         welcomeLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         welcomeLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -233,6 +413,160 @@ public class MainGUI extends javax.swing.JFrame {
 
         Background.add(WelcomePanel, "card5");
 
+        QuizPanel.setBackground(new java.awt.Color(1, 148, 141));
+
+        questionTa.setEditable(false);
+        questionTa.setBackground(new java.awt.Color(28, 88, 115));
+        questionTa.setColumns(20);
+        questionTa.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        questionTa.setForeground(new java.awt.Color(255, 255, 255));
+        questionTa.setRows(5);
+        questionTa.setBorder(null);
+        jScrollPane3.setViewportView(questionTa);
+
+        jLabel5.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Climate Quiz");
+
+        answerOne.setBackground(new java.awt.Color(1, 148, 141));
+        answerOne.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        answerOne.setForeground(new java.awt.Color(255, 255, 255));
+        answerOne.setText("Answer 1");
+        answerOne.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                answerOneActionPerformed(evt);
+            }
+        });
+
+        answerTwo.setBackground(new java.awt.Color(1, 148, 141));
+        answerTwo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        answerTwo.setForeground(new java.awt.Color(255, 255, 255));
+        answerTwo.setText("Answer 2");
+
+        answerThree.setBackground(new java.awt.Color(1, 148, 141));
+        answerThree.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        answerThree.setForeground(new java.awt.Color(255, 255, 255));
+        answerThree.setText("Answer 3");
+
+        answerFour.setBackground(new java.awt.Color(1, 148, 141));
+        answerFour.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        answerFour.setForeground(new java.awt.Color(255, 255, 255));
+        answerFour.setText("Answer 4");
+
+        prevQuestionBtn.setBackground(new java.awt.Color(2, 61, 84));
+        prevQuestionBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        prevQuestionBtn.setForeground(new java.awt.Color(255, 255, 255));
+        prevQuestionBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backward.png"))); // NOI18N
+        prevQuestionBtn.setText("Previous");
+        prevQuestionBtn.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        prevQuestionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prevQuestionBtnActionPerformed(evt);
+            }
+        });
+
+        nextQuestionBtn.setBackground(new java.awt.Color(2, 61, 84));
+        nextQuestionBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        nextQuestionBtn.setForeground(new java.awt.Color(255, 255, 255));
+        nextQuestionBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/forward.png"))); // NOI18N
+        nextQuestionBtn.setText("Next");
+        nextQuestionBtn.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        nextQuestionBtn.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        nextQuestionBtn.setIconTextGap(7);
+        nextQuestionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextQuestionBtnActionPerformed(evt);
+            }
+        });
+
+        quizResetBtn.setBackground(new java.awt.Color(2, 61, 84));
+        quizResetBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        quizResetBtn.setForeground(new java.awt.Color(255, 255, 255));
+        quizResetBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/reset.png"))); // NOI18N
+        quizResetBtn.setText("Retry?");
+        quizResetBtn.setBorder(null);
+        quizResetBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quizResetBtnActionPerformed(evt);
+            }
+        });
+
+        selectAnswerlbl.setBackground(new java.awt.Color(1, 148, 141));
+        selectAnswerlbl.setFont(new java.awt.Font("Segoe UI", 1, 19)); // NOI18N
+        selectAnswerlbl.setForeground(new java.awt.Color(255, 255, 255));
+        selectAnswerlbl.setText("Select an answer:");
+
+        javax.swing.GroupLayout QuizPanelLayout = new javax.swing.GroupLayout(QuizPanel);
+        QuizPanel.setLayout(QuizPanelLayout);
+        QuizPanelLayout.setHorizontalGroup(
+            QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(QuizPanelLayout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(QuizPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(QuizPanelLayout.createSequentialGroup()
+                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(QuizPanelLayout.createSequentialGroup()
+                                .addGap(62, 62, 62)
+                                .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(answerThree, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
+                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(QuizPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                                .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(111, Short.MAX_VALUE))
+                            .addGroup(QuizPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(answerTwo, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+                                    .addComponent(answerFour, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE))))))
+            .addGroup(QuizPanelLayout.createSequentialGroup()
+                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(QuizPanelLayout.createSequentialGroup()
+                        .addGap(158, 158, 158)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(QuizPanelLayout.createSequentialGroup()
+                        .addGap(244, 244, 244)
+                        .addComponent(selectAnswerlbl, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(QuizPanelLayout.createSequentialGroup()
+                .addGap(268, 268, 268)
+                .addComponent(quizResetBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        QuizPanelLayout.setVerticalGroup(
+            QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(QuizPanelLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(selectAnswerlbl, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                    .addComponent(answerTwo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(answerThree, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(answerFour, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(46, 46, 46)
+                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(quizResetBtn)
+                .addContainerGap(49, Short.MAX_VALUE))
+        );
+
+        Background.add(QuizPanel, "card4");
+
         TipPanel.setBackground(new java.awt.Color(1, 148, 141));
 
         jLabel2.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
@@ -240,15 +574,19 @@ public class MainGUI extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Climate Tips");
 
-        tipTa1.setEditable(false);
-        tipTa1.setBackground(new java.awt.Color(255, 255, 255));
+        tipTa1.setBackground(new java.awt.Color(28, 88, 115));
         tipTa1.setColumns(20);
         tipTa1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        tipTa1.setForeground(new java.awt.Color(255, 255, 255));
         tipTa1.setLineWrap(true);
         tipTa1.setRows(5);
         tipTa1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jScrollPane2.setViewportView(tipTa1);
 
+        addBtn1.setBackground(new java.awt.Color(2, 61, 84));
+        addBtn1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        addBtn1.setForeground(new java.awt.Color(255, 255, 255));
+        addBtn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/plus.png"))); // NOI18N
         addBtn1.setText("Add");
         addBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         addBtn1.addActionListener(new java.awt.event.ActionListener() {
@@ -257,18 +595,27 @@ public class MainGUI extends javax.swing.JFrame {
             }
         });
 
+        nextTipBtn1.setBackground(new java.awt.Color(2, 61, 84));
+        nextTipBtn1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        nextTipBtn1.setForeground(new java.awt.Color(255, 255, 255));
+        nextTipBtn1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/forward.png"))); // NOI18N
         nextTipBtn1.setText("Next");
         nextTipBtn1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        nextTipBtn1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         nextTipBtn1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nextTipBtn1ActionPerformed(evt);
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Please select which category of tips you would like to receive: ");
 
+        energyButton.setBackground(new java.awt.Color(1, 148, 141));
         tipButtonGroup1.add(energyButton);
+        energyButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        energyButton.setForeground(new java.awt.Color(255, 255, 255));
         energyButton.setText("Energy");
         energyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -276,7 +623,10 @@ public class MainGUI extends javax.swing.JFrame {
             }
         });
 
+        transportButton.setBackground(new java.awt.Color(1, 148, 141));
         tipButtonGroup1.add(transportButton);
+        transportButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        transportButton.setForeground(new java.awt.Color(255, 255, 255));
         transportButton.setText("Transportation");
         transportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -284,7 +634,10 @@ public class MainGUI extends javax.swing.JFrame {
             }
         });
 
+        recycleButton.setBackground(new java.awt.Color(1, 148, 141));
         tipButtonGroup1.add(recycleButton);
+        recycleButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        recycleButton.setForeground(new java.awt.Color(255, 255, 255));
         recycleButton.setText("Recycling");
         recycleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -296,6 +649,10 @@ public class MainGUI extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("You may enter any other suitable tips:");
 
+        prevTipBtn2.setBackground(new java.awt.Color(2, 61, 84));
+        prevTipBtn2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        prevTipBtn2.setForeground(new java.awt.Color(255, 255, 255));
+        prevTipBtn2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backward.png"))); // NOI18N
         prevTipBtn2.setText("Previous");
         prevTipBtn2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         prevTipBtn2.addActionListener(new java.awt.event.ActionListener() {
@@ -309,42 +666,39 @@ public class MainGUI extends javax.swing.JFrame {
         TipPanelLayout.setHorizontalGroup(
             TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TipPanelLayout.createSequentialGroup()
-                .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(TipPanelLayout.createSequentialGroup()
                         .addGap(161, 161, 161)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(TipPanelLayout.createSequentialGroup()
                         .addGap(42, 42, 42)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(39, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
-                            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 564, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(TipPanelLayout.createSequentialGroup()
-                                    .addComponent(energyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(68, 68, 68)
-                                    .addComponent(transportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(89, 89, 89)
-                                    .addComponent(recycleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGap(126, 126, 126))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel4)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(AddTipTF, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(43, 43, 43))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
-                            .addComponent(nextTipBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(214, 214, 214)))))
-            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(TipPanelLayout.createSequentialGroup()
-                    .addGap(165, 165, 165)
-                    .addComponent(prevTipBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(389, Short.MAX_VALUE)))
+                                    .addComponent(jLabel4)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(AddTipTF)
+                                        .addGroup(TipPanelLayout.createSequentialGroup()
+                                            .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(0, 0, Short.MAX_VALUE)))))))
+                    .addGroup(TipPanelLayout.createSequentialGroup()
+                        .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(TipPanelLayout.createSequentialGroup()
+                                .addGap(112, 112, 112)
+                                .addComponent(energyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(68, 68, 68)
+                                .addComponent(transportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(TipPanelLayout.createSequentialGroup()
+                                .addGap(91, 91, 91)
+                                .addComponent(prevTipBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(51, 51, 51)
+                        .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nextTipBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(recycleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         TipPanelLayout.setVerticalGroup(
             TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -353,146 +707,68 @@ public class MainGUI extends javax.swing.JFrame {
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel3)
-                .addGap(27, 27, 27)
+                .addGap(33, 33, 33)
                 .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(energyButton)
                     .addComponent(transportButton)
                     .addComponent(recycleButton))
-                .addGap(28, 28, 28)
-                .addComponent(nextTipBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addGap(49, 49, 49)
+                .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(prevTipBtn2)
+                    .addComponent(nextTipBtn1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
                 .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(AddTipTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(121, Short.MAX_VALUE))
-            .addGroup(TipPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TipPanelLayout.createSequentialGroup()
-                    .addContainerGap(415, Short.MAX_VALUE)
-                    .addComponent(prevTipBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(220, 220, 220)))
+                .addComponent(addBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
 
         Background.add(TipPanel, "card2");
 
-        QuizPanel.setBackground(new java.awt.Color(1, 148, 141));
-
-        questionTa.setEditable(false);
-        questionTa.setBackground(new java.awt.Color(255, 255, 255));
-        questionTa.setColumns(20);
-        questionTa.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        questionTa.setRows(5);
-        questionTa.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jScrollPane1.setViewportView(questionTa);
-
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 48)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Climate Quiz");
-
-        answerOne.setText("Answer 1");
-        answerOne.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                answerOneActionPerformed(evt);
-            }
-        });
-
-        answerTwo.setText("Answer 2");
-
-        answerThree.setText("Answer 3");
-
-        answerFour.setText("Answer 4");
-
-        prevQuestionBtn.setText("Previous");
-        prevQuestionBtn.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        nextQuestionBtn.setText("Next");
-        nextQuestionBtn.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        javax.swing.GroupLayout QuizPanelLayout = new javax.swing.GroupLayout(QuizPanel);
-        QuizPanel.setLayout(QuizPanelLayout);
-        QuizPanelLayout.setHorizontalGroup(
-            QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(QuizPanelLayout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 596, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(QuizPanelLayout.createSequentialGroup()
-                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-                                .addComponent(answerThree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(QuizPanelLayout.createSequentialGroup()
-                                .addGap(62, 62, 62)
-                                .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
-                                .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(69, 69, 69))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, QuizPanelLayout.createSequentialGroup()
-                                .addComponent(answerFour, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(39, 39, 39))
-                            .addComponent(answerTwo, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(44, Short.MAX_VALUE))
-            .addGroup(QuizPanelLayout.createSequentialGroup()
-                .addGap(158, 158, 158)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        QuizPanelLayout.setVerticalGroup(
-            QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(QuizPanelLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
-                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(answerOne, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                    .addComponent(answerTwo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(answerThree, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(answerFour, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46)
-                .addGroup(QuizPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nextQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(prevQuestionBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(83, Short.MAX_VALUE))
-        );
-
-        Background.add(QuizPanel, "card4");
-
         TrackerPanel.setBackground(new java.awt.Color(1, 148, 141));
 
-        deleteBTN.setText("Delete");
-        deleteBTN.setBorder(null);
-        deleteBTN.addActionListener(new java.awt.event.ActionListener() {
+        deleteBTNtracker.setBackground(new java.awt.Color(2, 61, 84));
+        deleteBTNtracker.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        deleteBTNtracker.setForeground(new java.awt.Color(255, 255, 255));
+        deleteBTNtracker.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/trash.png"))); // NOI18N
+        deleteBTNtracker.setText("Delete");
+        deleteBTNtracker.setBorder(null);
+        deleteBTNtracker.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteBTNActionPerformed(evt);
+                deleteBTNtrackerActionPerformed(evt);
             }
         });
 
-        addBTN1.setText("Add");
-        addBTN1.setBorder(null);
-        addBTN1.addActionListener(new java.awt.event.ActionListener() {
+        addBTNtracker.setBackground(new java.awt.Color(2, 61, 84));
+        addBTNtracker.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        addBTNtracker.setForeground(new java.awt.Color(255, 255, 255));
+        addBTNtracker.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/plus.png"))); // NOI18N
+        addBTNtracker.setText("Add");
+        addBTNtracker.setBorder(null);
+        addBTNtracker.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addBTN1ActionPerformed(evt);
+                addBTNtrackerActionPerformed(evt);
             }
         });
 
-        nextBTN.setText("Next");
-        nextBTN.addActionListener(new java.awt.event.ActionListener() {
+        nextBTNtracker.setBackground(new java.awt.Color(2, 61, 84));
+        nextBTNtracker.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        nextBTNtracker.setForeground(new java.awt.Color(255, 255, 255));
+        nextBTNtracker.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/forward.png"))); // NOI18N
+        nextBTNtracker.setText("Next");
+        nextBTNtracker.setBorder(null);
+        nextBTNtracker.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextBTNActionPerformed(evt);
+                nextBTNtrackerActionPerformed(evt);
             }
         });
 
-        jTextField1.setText("jTextField1");
+        trackerDisplay.setBackground(new java.awt.Color(28, 88, 115));
+        trackerDisplay.setForeground(new java.awt.Color(255, 255, 255));
 
         label1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         label1.setForeground(new java.awt.Color(242, 242, 242));
@@ -504,28 +780,55 @@ public class MainGUI extends javax.swing.JFrame {
         label2.setName(""); // NOI18N
         label2.setText("Action Tracker");
 
+        displayAllBTNtracker.setBackground(new java.awt.Color(2, 61, 84));
+        displayAllBTNtracker.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        displayAllBTNtracker.setForeground(new java.awt.Color(255, 255, 255));
+        displayAllBTNtracker.setText("Display All");
+        displayAllBTNtracker.setBorder(null);
+        displayAllBTNtracker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                displayAllBTNtrackerActionPerformed(evt);
+            }
+        });
+
+        updateStatusBTNtracker1.setBackground(new java.awt.Color(2, 61, 84));
+        updateStatusBTNtracker1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        updateStatusBTNtracker1.setForeground(new java.awt.Color(255, 255, 255));
+        updateStatusBTNtracker1.setText("Update Status");
+        updateStatusBTNtracker1.setBorder(null);
+        updateStatusBTNtracker1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateStatusBTNtracker1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout TrackerPanelLayout = new javax.swing.GroupLayout(TrackerPanel);
         TrackerPanel.setLayout(TrackerPanelLayout);
         TrackerPanelLayout.setHorizontalGroup(
             TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TrackerPanelLayout.createSequentialGroup()
                 .addGap(88, 88, 88)
-                .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(addBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(deleteBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(82, 82, 82))
             .addGroup(TrackerPanelLayout.createSequentialGroup()
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(TrackerPanelLayout.createSequentialGroup()
                         .addGap(34, 34, 34)
-                        .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(TrackerPanelLayout.createSequentialGroup()
+                                .addComponent(updateStatusBTNtracker1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(displayAllBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(109, 109, 109)
+                                .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(TrackerPanelLayout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(actionInput, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(22, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TrackerPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -538,17 +841,20 @@ public class MainGUI extends javax.swing.JFrame {
                 .addGap(23, 23, 23)
                 .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22)
-                .addComponent(textArea2, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(trackerDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nextBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nextBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(displayAllBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(updateStatusBTNtracker1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(59, 59, 59)
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(label1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(actionInput, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addGroup(TrackerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addBTN1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteBTNtracker, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29))
         );
 
@@ -685,22 +991,67 @@ public class MainGUI extends javax.swing.JFrame {
             System.out.println(e);
         }
     }
-    private void deleteBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBTNActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_deleteBTNActionPerformed
+    private void deleteBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBTNtrackerActionPerformed
+        // Tracker's Delete Button
 
-    private void addBTN1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBTN1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addBTN1ActionPerformed
+        String searchTerm = JOptionPane.showInputDialog(null, "Enter name of action to delete");
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            for (int i = 0; i < trackerList.size(); i++) {
+                ClimateAction temp = trackerList.get(i);
+                if (searchTerm.equalsIgnoreCase(temp.getName())) {
+                    trackerList.remove(i); // Delete the action
+                    saveTracker(); // Save the updated list
+                    trackerDisplay.append("\nDeleted: " + temp.getName());
+                    return;
+                }
+            }
+            trackerDisplay.append("\nNo matching action found.");
+        } else {
+            trackerDisplay.append("\nPlease enter a valid name.");
+        }
+    }//GEN-LAST:event_deleteBTNtrackerActionPerformed
 
-    private void nextBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBTNActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nextBTNActionPerformed
+    private void addBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBTNtrackerActionPerformed
+        // Tracker's Add Button
 
-    private void answerOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerOneActionPerformed
-        // TODO add your handling code here:
+        ClimateAction temp;  // Temporary object for neatness
+        String name = actionInput.getText();  // Get action name from user input
         
-    }//GEN-LAST:event_answerOneActionPerformed
+        // Optionally, prompt the user for action type and initial status
+        String actionType = JOptionPane.showInputDialog("Enter action type (e.g., Recycling, Energy Saving):");
+        String status = "Pending";  // Default status
+        
+        // Create action based on type
+        if (actionType.equalsIgnoreCase("Recycling")) {
+            temp = new RecyclingAction(name);  // Create a RecyclingAction object
+        } else if (actionType.equalsIgnoreCase("Energy Saving")) {
+            temp = new EnergySavingAction(name);  // Create an EnergySavingAction object
+        } else {
+            temp = new ClimateAction(name, status);  // Default ClimateAction if unknown type
+        }
+        
+        trackerList.add(temp);  // Add to the tracker list
+        saveTracker();  // Save list to the file
+        
+        trackerDisplay.append("\n" + name + " added with status: " + status);
+    }//GEN-LAST:event_addBTNtrackerActionPerformed
+
+    private void nextBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextBTNtrackerActionPerformed
+        // Tracker's Next Button
+        
+        if (!trackerList.isEmpty()) {
+            ClimateAction temp = trackerList.get(listIndex);  // Get current action
+            trackerDisplay.setText(temp.getActionType() + ": " + temp.getName() + " - Status: " + temp.getStatus());  // Display action info with status
+            listIndex++;  // Move to the next action
+            
+            // Ensure we don't go past the end of the list
+            if (listIndex >= trackerList.size()) {
+                listIndex = 0;  // Start over when reaching the end
+            }
+        } else {
+            trackerDisplay.setText("Nothing in your tracker yet!");
+        }
+    }//GEN-LAST:event_nextBTNtrackerActionPerformed
 
     private void navExitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navExitBtnActionPerformed
          // Show a confirmation dialog with a message
@@ -948,6 +1299,69 @@ public class MainGUI extends javax.swing.JFrame {
             }
     }//GEN-LAST:event_transportButtonActionPerformed
 
+    private void answerOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_answerOneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_answerOneActionPerformed
+
+    private void prevQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevQuestionBtnActionPerformed
+        // TODO add your handling code here:
+        saveAnswer();
+        if (quizApp.hasPreviousQuestion()) {
+            quizApp.previousQuestion();
+            loadQuestion();
+        }
+    }//GEN-LAST:event_prevQuestionBtnActionPerformed
+
+    private void nextQuestionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextQuestionBtnActionPerformed
+
+        saveAnswer();
+
+        // Clear all radio button selections before moving to next question
+        answerBtnGroup.clearSelection();
+
+        // Check if it's the final question
+        if (quizApp.hasNextQuestion()) {
+            quizApp.nextQuestion();
+            loadQuestion();
+        }
+        else {
+            // End of the quiz: display the score
+            int score = quizApp.calculateScore();
+            questionTa.setText("Quiz Completed!\nYour score: " + score + "/" + quizApp.getTotalQuestions());
+
+            // Show the reset button
+            quizResetBtn.setVisible(true);
+
+            // Hide next/prev buttons and answers
+            selectAnswerlbl.setVisible(false);
+            answerFour.setVisible(false);
+            answerThree.setVisible(false);
+            answerTwo.setVisible(false);
+            answerOne.setVisible(false);
+            nextQuestionBtn.setVisible(false);
+            prevQuestionBtn.setVisible(false);
+        }
+    }//GEN-LAST:event_nextQuestionBtnActionPerformed
+
+    private void quizResetBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quizResetBtnActionPerformed
+        // TODO add your handling code here:
+        resetQuiz();
+
+        selectAnswerlbl.setVisible(true);
+        answerFour.setVisible(true);
+        answerThree.setVisible(true);
+        answerTwo.setVisible(true);
+        answerOne.setVisible(true);
+    }//GEN-LAST:event_quizResetBtnActionPerformed
+
+    private void displayAllBTNtrackerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayAllBTNtrackerActionPerformed
+        displayAllTracker();
+    }//GEN-LAST:event_displayAllBTNtrackerActionPerformed
+
+    private void updateStatusBTNtracker1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStatusBTNtracker1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_updateStatusBTNtracker1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -992,21 +1406,23 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JPanel TipPanel;
     private javax.swing.JPanel TrackerPanel;
     private javax.swing.JPanel WelcomePanel;
-    private javax.swing.JToggleButton addBTN1;
+    private javax.swing.JTextField actionInput;
+    private javax.swing.JToggleButton addBTNtracker;
     private javax.swing.JButton addBtn1;
+    private javax.swing.ButtonGroup answerBtnGroup;
     private javax.swing.JRadioButton answerFour;
     private javax.swing.JRadioButton answerOne;
     private javax.swing.JRadioButton answerThree;
     private javax.swing.JRadioButton answerTwo;
-    private javax.swing.JToggleButton deleteBTN;
+    private javax.swing.JToggleButton deleteBTNtracker;
+    private javax.swing.JButton displayAllBTNtracker;
     private javax.swing.JRadioButton energyButton;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JScrollPane jScrollPane3;
     private java.awt.Label label1;
     private java.awt.Label label2;
     private java.awt.Label label3;
@@ -1014,17 +1430,20 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JButton navQuizBtn;
     private javax.swing.JButton navTipBtn;
     private javax.swing.JButton navTrackerBtn;
-    private javax.swing.JButton nextBTN;
+    private javax.swing.JButton nextBTNtracker;
     private javax.swing.JButton nextQuestionBtn;
     private javax.swing.JButton nextTipBtn1;
     private javax.swing.JButton prevQuestionBtn;
     private javax.swing.JButton prevTipBtn2;
     private javax.swing.JTextArea questionTa;
+    private javax.swing.JButton quizResetBtn;
     private javax.swing.JRadioButton recycleButton;
-    private java.awt.TextArea textArea2;
+    private javax.swing.JLabel selectAnswerlbl;
     private javax.swing.ButtonGroup tipButtonGroup1;
     private javax.swing.JTextArea tipTa1;
+    private java.awt.TextArea trackerDisplay;
     private javax.swing.JRadioButton transportButton;
+    private javax.swing.JButton updateStatusBTNtracker1;
     private java.awt.TextArea welcomeLabel;
     // End of variables declaration//GEN-END:variables
 }

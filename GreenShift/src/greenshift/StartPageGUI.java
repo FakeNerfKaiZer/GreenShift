@@ -68,10 +68,11 @@ public class StartPageGUI extends javax.swing.JFrame {
 
         background.setBackground(new java.awt.Color(1, 148, 141));
 
-        homeBTN.setBackground(new java.awt.Color(141, 211, 181));
+        homeBTN.setBackground(new java.awt.Color(28, 88, 115));
         homeBTN.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         homeBTN.setForeground(new java.awt.Color(255, 255, 255));
         homeBTN.setText("Start");
+        homeBTN.setBorder(null);
         homeBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 homeBTNActionPerformed(evt);
@@ -130,14 +131,13 @@ public class StartPageGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void homeBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBTNActionPerformed
-        // TODO add your handling code here:
         // Close current window
         this.dispose();
 
-        // Open MainGUI and show WelcomePanel
+        // Open the MainGUI and show WelcomePanel
         MainGUI mainGUI = new MainGUI();
         mainGUI.showWelcomePanel();  // Display the WelcomePanel card
-        mainGUI.setVisible(true);
+        mainGUI.setVisible(true);    // Ensure the MainGUI window is visible
     }//GEN-LAST:event_homeBTNActionPerformed
 
     /**

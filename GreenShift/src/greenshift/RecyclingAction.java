@@ -22,6 +22,6 @@ public class RecyclingAction extends ClimateAction {
     // Override setStatus if you want to customize how the status is updated
     @Override
     public void setStatus(String status) {
-        super.setStatus(status); // You can add additional logic here if needed
+        super.setStatus(status);
     }
 }
