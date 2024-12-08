@@ -10,32 +10,35 @@ import java.io.Serializable;
  *
  * @author bloxd
  */
-public class ClimateAction implements Serializable{
-    protected String name;
-    protected String status;
+public class ClimateAction implements Serializable {
+    
+    protected String name;   // Action name
+    protected String status; // Action status
 
+    // Constructor to initialize the action.
     public ClimateAction(String name, String status) {
         this.name = name;
         this.status = status;
     }
 
     public String getName() {
-        return name;
+        return name; // Returns the action name
     }
 
     public String getStatus() {
-        return status;
+        return status; // Returns the action status
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status = status; // Updates the action status
     }
 
-    // This method can be overridden in subclasses
+    // Returns the type of action (can be overridden in subclasses).
     public String getActionType() {
         return "General Action";
     }
 
+    // Returns a string representation of the action.
     @Override
     public String toString() {
         return name + " - Status: " + status;

@@ -137,7 +137,7 @@ public class StartPageGUI extends javax.swing.JFrame {
         // Open the MainGUI and show WelcomePanel
         MainGUI mainGUI = new MainGUI();
         mainGUI.showWelcomePanel();  // Display the WelcomePanel card
-        mainGUI.setVisible(true);    // Ensure the MainGUI window is visible
+        mainGUI.setVisible(true); // Ensure the MainGUI window is visible
     }//GEN-LAST:event_homeBTNActionPerformed
 
     /**
