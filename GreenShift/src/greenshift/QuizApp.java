@@ -9,63 +9,69 @@ import java.util.*;
  * @author aorpr
  */
 public class QuizApp {
-    private List<Question> questions; // List of Question objects
-    private int[] userAnswers;
-    private int currentQuestion; //int for index of current question 
+    private List<Question> questions; // List of Question objects in the quiz.
+    private int[] userAnswers; // Stores user's answers; -1 indicates unanswered questions.
+    private int currentQuestion; // Index of the currently displayed question.
 
+    // Constructor to initialize the quiz with a list of questions.
     public QuizApp(List<Question> questions) {
         this.questions = questions;
         this.userAnswers = new int[questions.size()];
-        Arrays.fill(userAnswers, -1); // Initialize unanswered
-        this.currentQuestion = 0;
+        Arrays.fill(userAnswers, -1); // Initialize all questions as unanswered.
+        this.currentQuestion = 0; // Start with the first question.
     }
 
+    // Returns the currently displayed question.
     public Question getCurrentQuestion() {
         return questions.get(currentQuestion);
     }
 
-    
+    // Records the user's answer for the current question.
     public void setUserAnswer(int answerIndex) {
         userAnswers[currentQuestion] = answerIndex;
     }
 
+    // Retrieves the user's answer for the current question.
     public int getUserAnswer() {
         return userAnswers[currentQuestion];
     }
 
+    // Checks if there is a next question to navigate to.
     public boolean hasNextQuestion() {
         return currentQuestion < questions.size() - 1;
     }
 
+    // Checks if there is a previous question to navigate to.
     public boolean hasPreviousQuestion() {
         return currentQuestion > 0;
     }
 
-    //Next q if there even is a next q 
+    // Moves to the next question if available.
     public void nextQuestion() {
         if (hasNextQuestion()) {
             currentQuestion++;
         }
     }
 
-    //If has prev q, then -- to go prev
+    // Moves to the previous question if available.
     public void previousQuestion() {
         if (hasPreviousQuestion()) {
             currentQuestion--;
         }
     }
 
-    //For each question user gets correct out of i questions, score up. 
+    // Calculates the user's score by counting correctly answered questions.
     public int calculateScore() {
         int score = 0;
         for (int i = 0; i < questions.size(); i++) {
             if (userAnswers[i] == questions.get(i).getCorrectAnswer()) {
-                score++;
+                score++; // Increment score for each correct answer.
             }
         }
         return score;
     }
 
+    // Returns the total number of questions in the quiz.
     public int getTotalQuestions() {
         return questions.size();
     }

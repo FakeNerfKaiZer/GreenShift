@@ -12,21 +12,25 @@ import java.io.Serializable;
  */
 public class TransportTips implements Serializable {
     
-    String tipTransport;
-    
-    public TransportTips(String tipTransport){
+    private String tipTransport; // Stores the transportation tip.
+
+    // Constructor to initialize a transportation tip with a specified message.
+    public TransportTips(String tipTransport) {
         this.tipTransport = tipTransport;
     }
 
+    // Default constructor for creating an empty TransportTips object.
     public TransportTips() {
     }
 
+    // Returns the transportation tip.
     public String get() {
         return tipTransport;
     }
     
+    // Returns the transportation tip as a string representation.
     @Override
-    public String toString(){
+    public String toString() {
         return tipTransport;
     }
 }

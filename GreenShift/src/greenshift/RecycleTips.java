@@ -10,23 +10,28 @@ import java.io.Serializable;
  *
  * @author sambo
  */
+// Represents a recycling tip that can be serialized for persistence.
 public class RecycleTips implements Serializable {
     
-    String tipRecyle;
-    
-    public RecycleTips(String tipRecyle){
+    private String tipRecyle; // Stores the recycling tip.
+
+    // Constructor to initialize a recycling tip with a specified message.
+    public RecycleTips(String tipRecyle) {
         this.tipRecyle = tipRecyle;
     }
 
+    // Default constructor for creating an empty RecycleTips object.
     public RecycleTips() {
     }
 
+    // Returns the recycling tip.
     public String get() {
         return tipRecyle;
     }
     
+    // Returns the recycling tip as a string representation.
     @Override
-    public String toString(){
+    public String toString() {
         return tipRecyle;
     }
 }

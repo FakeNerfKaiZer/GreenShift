@@ -6,7 +6,6 @@ package greenshift;
 
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.io.BufferedReader;
 import javax.swing.JOptionPane;
 import java.io.File;
@@ -1359,7 +1358,21 @@ public class MainGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_displayAllBTNtrackerActionPerformed
 
     private void updateStatusBTNtracker1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateStatusBTNtracker1ActionPerformed
-        // TODO add your handling code here:
+        //Update Status of a Climate Action
+        
+        String searchTerm = JOptionPane.showInputDialog(null, "Enter action to update status:");
+        String newStatus = JOptionPane.showInputDialog("Enter new status (e.g., Completed, In Progress):");
+        
+        for (int i = 0; i < trackerList.size(); i++) {
+            ClimateAction temp = trackerList.get(i);
+            if (searchTerm.equalsIgnoreCase(temp.getName())) {
+                temp.setStatus(newStatus);  // Update the status of the action
+                saveTracker();  // Save the list again
+                trackerDisplay.append("\nStatus of " + searchTerm + " updated to: " + newStatus);
+                return;
+            }
+        }
+        trackerDisplay.append("\nAction not found.");
     }//GEN-LAST:event_updateStatusBTNtracker1ActionPerformed
 
     /**
